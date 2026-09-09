@@ -1,0 +1,362 @@
+[
+  {
+    "id": "e001",
+    "studentId": "s01",
+    "courseId": "c101"
+  },
+  {
+    "id": "e002",
+    "studentId": "s03",
+    "courseId": "c101"
+  },
+  {
+    "id": "e003",
+    "studentId": "s04",
+    "courseId": "c101"
+  },
+  {
+    "id": "e004",
+    "studentId": "s05",
+    "courseId": "c101"
+  },
+  {
+    "id": "e005",
+    "studentId": "s06",
+    "courseId": "c101"
+  },
+  {
+    "id": "e006",
+    "studentId": "s08",
+    "courseId": "c101"
+  },
+  {
+    "id": "e007",
+    "studentId": "s09",
+    "courseId": "c101"
+  },
+  {
+    "id": "e008",
+    "studentId": "s12",
+    "courseId": "c101"
+  },
+  {
+    "id": "e009",
+    "studentId": "s13",
+    "courseId": "c101"
+  },
+  {
+    "id": "e010",
+    "studentId": "s16",
+    "courseId": "c101"
+  },
+  {
+    "id": "e011",
+    "studentId": "s17",
+    "courseId": "c101"
+  },
+  {
+    "id": "e012",
+    "studentId": "s20",
+    "courseId": "c101"
+  },
+  {
+    "id": "e013",
+    "studentId": "s21",
+    "courseId": "c101"
+  },
+  {
+    "id": "e014",
+    "studentId": "s24",
+    "courseId": "c101"
+  },
+  {
+    "id": "e015",
+    "studentId": "s25",
+    "courseId": "c101"
+  },
+  {
+    "id": "e016",
+    "studentId": "s28",
+    "courseId": "c101"
+  },
+  {
+    "id": "e017",
+    "studentId": "s29",
+    "courseId": "c101"
+  },
+  {
+    "id": "e018",
+    "studentId": "s01",
+    "courseId": "c102"
+  },
+  {
+    "id": "e019",
+    "studentId": "s02",
+    "courseId": "c102"
+  },
+  {
+    "id": "e020",
+    "studentId": "s05",
+    "courseId": "c102"
+  },
+  {
+    "id": "e021",
+    "studentId": "s06",
+    "courseId": "c102"
+  },
+  {
+    "id": "e022",
+    "studentId": "s07",
+    "courseId": "c102"
+  },
+  {
+    "id": "e023",
+    "studentId": "s08",
+    "courseId": "c102"
+  },
+  {
+    "id": "e024",
+    "studentId": "s09",
+    "courseId": "c102"
+  },
+  {
+    "id": "e025",
+    "studentId": "s10",
+    "courseId": "c102"
+  },
+  {
+    "id": "e026",
+    "studentId": "s13",
+    "courseId": "c102"
+  },
+  {
+    "id": "e027",
+    "studentId": "s14",
+    "courseId": "c102"
+  },
+  {
+    "id": "e028",
+    "studentId": "s17",
+    "courseId": "c102"
+  },
+  {
+    "id": "e029",
+    "studentId": "s18",
+    "courseId": "c102"
+  },
+  {
+    "id": "e030",
+    "studentId": "s21",
+    "courseId": "c102"
+  },
+  {
+    "id": "e031",
+    "studentId": "s22",
+    "courseId": "c102"
+  },
+  {
+    "id": "e032",
+    "studentId": "s25",
+    "courseId": "c102"
+  },
+  {
+    "id": "e033",
+    "studentId": "s26",
+    "courseId": "c102"
+  },
+  {
+    "id": "e034",
+    "studentId": "s29",
+    "courseId": "c102"
+  },
+  {
+    "id": "e035",
+    "studentId": "s30",
+    "courseId": "c102"
+  },
+  {
+    "id": "e036",
+    "studentId": "s02",
+    "courseId": "c103"
+  },
+  {
+    "id": "e037",
+    "studentId": "s03",
+    "courseId": "c103"
+  },
+  {
+    "id": "e038",
+    "studentId": "s06",
+    "courseId": "c103"
+  },
+  {
+    "id": "e039",
+    "studentId": "s07",
+    "courseId": "c103"
+  },
+  {
+    "id": "e040",
+    "studentId": "s09",
+    "courseId": "c103"
+  },
+  {
+    "id": "e041",
+    "studentId": "s10",
+    "courseId": "c103"
+  },
+  {
+    "id": "e042",
+    "studentId": "s11",
+    "courseId": "c103"
+  },
+  {
+    "id": "e043",
+    "studentId": "s12",
+    "courseId": "c103"
+  },
+  {
+    "id": "e044",
+    "studentId": "s13",
+    "courseId": "c103"
+  },
+  {
+    "id": "e045",
+    "studentId": "s14",
+    "courseId": "c103"
+  },
+  {
+    "id": "e046",
+    "studentId": "s15",
+    "courseId": "c103"
+  },
+  {
+    "id": "e047",
+    "studentId": "s18",
+    "courseId": "c103"
+  },
+  {
+    "id": "e048",
+    "studentId": "s19",
+    "courseId": "c103"
+  },
+  {
+    "id": "e049",
+    "studentId": "s22",
+    "courseId": "c103"
+  },
+  {
+    "id": "e050",
+    "studentId": "s23",
+    "courseId": "c103"
+  },
+  {
+    "id": "e051",
+    "studentId": "s26",
+    "courseId": "c103"
+  },
+  {
+    "id": "e052",
+    "studentId": "s27",
+    "courseId": "c103"
+  },
+  {
+    "id": "e053",
+    "studentId": "s30",
+    "courseId": "c103"
+  },
+  {
+    "id": "e054",
+    "studentId": "s03",
+    "courseId": "c104"
+  },
+  {
+    "id": "e055",
+    "studentId": "s04",
+    "courseId": "c104"
+  },
+  {
+    "id": "e056",
+    "studentId": "s07",
+    "courseId": "c104"
+  },
+  {
+    "id": "e057",
+    "studentId": "s08",
+    "courseId": "c104"
+  },
+  {
+    "id": "e058",
+    "studentId": "s11",
+    "courseId": "c104"
+  },
+  {
+    "id": "e059",
+    "studentId": "s12",
+    "courseId": "c104"
+  },
+  {
+    "id": "e060",
+    "studentId": "s14",
+    "courseId": "c104"
+  },
+  {
+    "id": "e061",
+    "studentId": "s15",
+    "courseId": "c104"
+  },
+  {
+    "id": "e062",
+    "studentId": "s16",
+    "courseId": "c104"
+  },
+  {
+    "id": "e063",
+    "studentId": "s17",
+    "courseId": "c104"
+  },
+  {
+    "id": "e064",
+    "studentId": "s18",
+    "courseId": "c104"
+  },
+  {
+    "id": "e065",
+    "studentId": "s19",
+    "courseId": "c104"
+  },
+  {
+    "id": "e066",
+    "studentId": "s20",
+    "courseId": "c104"
+  },
+  {
+    "id": "e067",
+    "studentId": "s21",
+    "courseId": "c104"
+  },
+  {
+    "id": "e068",
+    "studentId": "s22",
+    "courseId": "c104"
+  },
+  {
+    "id": "e069",
+    "studentId": "s23",
+    "courseId": "c104"
+  },
+  {
+    "id": "e070",
+    "studentId": "s24",
+    "courseId": "c104"
+  },
+  {
+    "id": "e071",
+    "studentId": "s27",
+    "courseId": "c104"
+  },
+  {
+    "id": "e072",
+    "studentId": "s28",
+    "courseId": "c104"
+  }
+]

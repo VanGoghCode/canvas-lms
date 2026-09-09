@@ -1,0 +1,182 @@
+[
+  {
+    "id": "ds-foundations-rebuild",
+    "title": "Rebuild your data structures foundation",
+    "description": "Review core structures with short examples, memory diagrams, and quick checks before returning to graded work.",
+    "estimatedMinutes": 20,
+    "difficulty": "remedial",
+    "topics": ["foundations", "practice"],
+    "courseIds": ["c101"]
+  },
+  {
+    "id": "ds-visual-tracing",
+    "title": "Trace algorithms visually",
+    "description": "Practice following stack, queue, tree, and graph operations step by step to expose gaps in your reasoning.",
+    "estimatedMinutes": 25,
+    "difficulty": "core",
+    "topics": ["practice", "analysis"],
+    "courseIds": ["c101"]
+  },
+  {
+    "id": "ds-complexity-workshop",
+    "title": "Complexity analysis workshop",
+    "description": "Compare common implementations and explain how input size changes their runtime and memory costs.",
+    "estimatedMinutes": 30,
+    "difficulty": "core",
+    "topics": ["analysis", "application"],
+    "courseIds": ["c101"]
+  },
+  {
+    "id": "ds-advanced-graphs",
+    "title": "Advanced graph problems",
+    "description": "Stretch your skills with weighted paths, traversal tradeoffs, and a compact real-world graph challenge.",
+    "estimatedMinutes": 40,
+    "difficulty": "advanced",
+    "topics": ["project", "synthesis"],
+    "courseIds": ["c101"]
+  },
+  {
+    "id": "web-semantic-refresh",
+    "title": "Semantic HTML refresher",
+    "description": "Revisit document structure, accessible labels, and browser behavior through small corrective examples.",
+    "estimatedMinutes": 18,
+    "difficulty": "remedial",
+    "topics": ["foundations", "practice"],
+    "courseIds": ["c102"]
+  },
+  {
+    "id": "web-react-state-drills",
+    "title": "React state practice",
+    "description": "Work through focused component-state exercises and identify when data should be derived instead of stored.",
+    "estimatedMinutes": 25,
+    "difficulty": "core",
+    "topics": ["practice", "application"],
+    "courseIds": ["c102"]
+  },
+  {
+    "id": "web-accessibility-debugging",
+    "title": "Accessibility debugging lab",
+    "description": "Inspect a small interface, diagnose keyboard and screen-reader issues, and propose targeted fixes.",
+    "estimatedMinutes": 30,
+    "difficulty": "core",
+    "topics": ["analysis", "application"],
+    "courseIds": ["c102"]
+  },
+  {
+    "id": "web-performance-patterns",
+    "title": "Web performance patterns",
+    "description": "Explore rendering, loading, and caching tradeoffs through an advanced front-end optimization challenge.",
+    "estimatedMinutes": 40,
+    "difficulty": "advanced",
+    "topics": ["project", "synthesis"],
+    "courseIds": ["c102"]
+  },
+  {
+    "id": "data-cleaning-basics",
+    "title": "Data cleaning essentials",
+    "description": "Practice identifying missing values, inconsistent categories, and outliers in a guided dataset.",
+    "estimatedMinutes": 20,
+    "difficulty": "remedial",
+    "topics": ["foundations", "practice"],
+    "courseIds": ["c103"]
+  },
+  {
+    "id": "data-exploration-practice",
+    "title": "Exploratory analysis practice",
+    "description": "Choose useful summaries and visualizations, then explain the patterns and limitations you find.",
+    "estimatedMinutes": 25,
+    "difficulty": "core",
+    "topics": ["practice", "analysis"],
+    "courseIds": ["c103"]
+  },
+  {
+    "id": "data-model-evaluation",
+    "title": "Model evaluation lab",
+    "description": "Compare metrics, check validation results, and decide which model best fits a practical scenario.",
+    "estimatedMinutes": 35,
+    "difficulty": "core",
+    "topics": ["analysis", "application"],
+    "courseIds": ["c103"]
+  },
+  {
+    "id": "data-feature-engineering",
+    "title": "Feature engineering challenge",
+    "description": "Create and defend new features for a noisy dataset, then test whether they improve a model.",
+    "estimatedMinutes": 40,
+    "difficulty": "advanced",
+    "topics": ["project", "synthesis"],
+    "courseIds": ["c103"]
+  },
+  {
+    "id": "design-research-foundations",
+    "title": "User research foundations",
+    "description": "Review unbiased questions, observation notes, and evidence-based findings with a guided example.",
+    "estimatedMinutes": 20,
+    "difficulty": "remedial",
+    "topics": ["foundations", "practice"],
+    "courseIds": ["c104"]
+  },
+  {
+    "id": "design-journey-map",
+    "title": "Journey mapping practice",
+    "description": "Turn research notes into a focused journey map that connects user needs to design opportunities.",
+    "estimatedMinutes": 25,
+    "difficulty": "core",
+    "topics": ["practice", "analysis"],
+    "courseIds": ["c104"]
+  },
+  {
+    "id": "design-usability-diagnosis",
+    "title": "Usability diagnosis lab",
+    "description": "Evaluate a prototype, prioritize observed friction, and recommend changes tied to user evidence.",
+    "estimatedMinutes": 30,
+    "difficulty": "core",
+    "topics": ["analysis", "application"],
+    "courseIds": ["c104"]
+  },
+  {
+    "id": "design-systems-prototype",
+    "title": "Design systems prototype",
+    "description": "Build an advanced component pattern that balances consistency, accessibility, and product context.",
+    "estimatedMinutes": 40,
+    "difficulty": "advanced",
+    "topics": ["project", "synthesis"],
+    "courseIds": ["c104"]
+  },
+  {
+    "id": "study-plan-reset",
+    "title": "15-minute study plan reset",
+    "description": "Turn unfinished work into a realistic sequence of small study blocks with a clear first task.",
+    "estimatedMinutes": 15,
+    "difficulty": "remedial",
+    "topics": ["study-skills", "foundations"],
+    "courseIds": ["*"]
+  },
+  {
+    "id": "spaced-practice-builder",
+    "title": "Build a spaced-practice routine",
+    "description": "Plan three short retrieval sessions that reinforce weak material without creating a last-minute crunch.",
+    "estimatedMinutes": 20,
+    "difficulty": "core",
+    "topics": ["study-skills", "practice"],
+    "courseIds": ["*"]
+  },
+  {
+    "id": "transfer-challenge",
+    "title": "Cross-course transfer challenge",
+    "description": "Apply a strong concept from one course to a new problem and reflect on what transfers successfully.",
+    "estimatedMinutes": 30,
+    "difficulty": "advanced",
+    "topics": ["application", "synthesis"],
+    "courseIds": ["*"]
+  },
+  {
+    "id": "peer-teaching-extension",
+    "title": "Peer-teaching extension",
+    "description": "Create a concise explanation or worked example that could help a classmate master a difficult idea.",
+    "estimatedMinutes": 25,
+    "difficulty": "enrichment",
+    "topics": ["reflection", "synthesis"],
+    "courseIds": ["*"]
+  }
+]

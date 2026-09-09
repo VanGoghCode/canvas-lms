@@ -1,0 +1,34 @@
+[
+  {
+    "id": "c101",
+    "code": "CS 210",
+    "title": "Data Structures & Algorithms",
+    "instructorId": "s01",
+    "description": "A practical introduction to core data structures, algorithmic thinking, and complexity analysis.",
+    "syllabus": "We will cover arrays, linked structures, stacks, queues, trees, graphs, hashing, sorting, searching, and algorithm analysis. Grades are based on six assignments. Late submissions are accepted for up to 48 hours with a small penalty in a real course; this demo does not enforce penalties."
+  },
+  {
+    "id": "c102",
+    "code": "WEB 240",
+    "title": "Modern Web Development",
+    "instructorId": "s02",
+    "description": "Build accessible, maintainable web applications using semantic HTML, CSS, TypeScript, and React.",
+    "syllabus": "Topics include semantic UI, responsive CSS, TypeScript fundamentals, component design, routing, forms, state management, and frontend testing. The course emphasizes small, composable modules and readable code."
+  },
+  {
+    "id": "c103",
+    "code": "DS 150",
+    "title": "Applied Data Science",
+    "instructorId": "s03",
+    "description": "An applied survey of data preparation, exploratory analysis, visualization, and introductory modeling.",
+    "syllabus": "Students will practice cleaning data, exploratory analysis, descriptive statistics, feature construction, model evaluation, and communicating findings. Assignments are designed as short applied exercises rather than long projects."
+  },
+  {
+    "id": "c104",
+    "code": "UX 180",
+    "title": "Human-Centered Product Design",
+    "instructorId": "s04",
+    "description": "Learn to frame product problems, understand users, prototype solutions, and evaluate design decisions.",
+    "syllabus": "The course moves from problem framing through interviews, journey mapping, wireframing, prototyping, usability testing, and design critique. Each assignment contributes to a lightweight product case study."
+  }
+]

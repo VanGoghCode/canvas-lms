@@ -1,0 +1,12 @@
+node_modules
+dist
+*.local
+*.tsbuildinfo
+.DS_Store
+
+# Python virtualenv
+.venv/
+
+# generated from vite.config.ts
+vite.config.js
+vite.config.d.ts

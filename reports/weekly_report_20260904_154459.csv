@@ -1,0 +1,7 @@
+report_week_start,report_week_end,section,course_code,course_title,entity_id,entity_name,student_id,student_name,group_name,student_count,pass_rate_percent,average_grade_percent,completion_rate_percent,missing_submissions,reason,suggested_action,finding
+2026-08-31,2026-09-04,course_summary,CS 210,Data Structures & Algorithms,c101,Data Structures & Algorithms,,,,18,100.0,76.4,,,,,
+2026-08-31,2026-09-04,course_summary,WEB 240,Modern Web Development,c102,Modern Web Development,,,,18,,,,,,,
+2026-08-31,2026-09-04,course_summary,DS 150,Applied Data Science,c103,Applied Data Science,,,,18,,,,,,,
+2026-08-31,2026-09-04,course_summary,UX 180,Human-Centered Product Design,c104,Human-Centered Product Design,,,,18,,,,,,,
+2026-08-31,2026-09-04,administrator_finding,,,finding-1,Finding 1,,,,,,,,,,,CS 210 has the lowest average current grade at 76.4% and a 100.0% pass rate.
+2026-08-31,2026-09-04,administrator_finding,,,finding-2,Finding 2,,,,,,,,,,,2 submissions were recorded this week; the prior week had none.

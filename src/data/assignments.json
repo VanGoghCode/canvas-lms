@@ -1,0 +1,194 @@
+[
+  {
+    "id": "a101",
+    "courseId": "c101",
+    "title": "Foundations Checkpoint",
+    "description": "Short exercise covering the first module.",
+    "dueDate": "2026-07-01T23:59",
+    "pointsPossible": 25
+  },
+  {
+    "id": "a102",
+    "courseId": "c101",
+    "title": "Concept Practice",
+    "description": "Apply the core concepts from weeks 1–2.",
+    "dueDate": "2026-07-14T23:59",
+    "pointsPossible": 50
+  },
+  {
+    "id": "a103",
+    "courseId": "c101",
+    "title": "Mini Project",
+    "description": "Build a small artifact that demonstrates the current unit.",
+    "dueDate": "2026-07-27T23:59",
+    "pointsPossible": 100
+  },
+  {
+    "id": "a104",
+    "courseId": "c101",
+    "title": "Analysis & Reflection",
+    "description": "Explain design or technical choices and tradeoffs.",
+    "dueDate": "2026-08-09T23:59",
+    "pointsPossible": 50
+  },
+  {
+    "id": "a105",
+    "courseId": "c101",
+    "title": "Applied Challenge",
+    "description": "Solve a more open-ended problem using course techniques.",
+    "dueDate": "2026-08-22T23:59",
+    "pointsPossible": 100
+  },
+  {
+    "id": "a106",
+    "courseId": "c101",
+    "title": "Final Synthesis",
+    "description": "Connect the major ideas from the course in one submission.",
+    "dueDate": "2026-09-02T23:59",
+    "pointsPossible": 125
+  },
+  {
+    "id": "a201",
+    "courseId": "c102",
+    "title": "Foundations Checkpoint",
+    "description": "Short exercise covering the first module.",
+    "dueDate": "2026-07-03T23:59",
+    "pointsPossible": 25
+  },
+  {
+    "id": "a202",
+    "courseId": "c102",
+    "title": "Concept Practice",
+    "description": "Apply the core concepts from weeks 1–2.",
+    "dueDate": "2026-07-16T23:59",
+    "pointsPossible": 50
+  },
+  {
+    "id": "a203",
+    "courseId": "c102",
+    "title": "Mini Project",
+    "description": "Build a small artifact that demonstrates the current unit.",
+    "dueDate": "2026-07-29T23:59",
+    "pointsPossible": 100
+  },
+  {
+    "id": "a204",
+    "courseId": "c102",
+    "title": "Analysis & Reflection",
+    "description": "Explain design or technical choices and tradeoffs.",
+    "dueDate": "2026-08-11T23:59",
+    "pointsPossible": 50
+  },
+  {
+    "id": "a205",
+    "courseId": "c102",
+    "title": "Applied Challenge",
+    "description": "Solve a more open-ended problem using course techniques.",
+    "dueDate": "2026-08-24T23:59",
+    "pointsPossible": 100
+  },
+  {
+    "id": "a206",
+    "courseId": "c102",
+    "title": "Final Synthesis",
+    "description": "Connect the major ideas from the course in one submission.",
+    "dueDate": "2026-09-02T23:59",
+    "pointsPossible": 125
+  },
+  {
+    "id": "a301",
+    "courseId": "c103",
+    "title": "Foundations Checkpoint",
+    "description": "Short exercise covering the first module.",
+    "dueDate": "2026-06-30T23:59",
+    "pointsPossible": 25
+  },
+  {
+    "id": "a302",
+    "courseId": "c103",
+    "title": "Concept Practice",
+    "description": "Apply the core concepts from weeks 1–2.",
+    "dueDate": "2026-07-13T23:59",
+    "pointsPossible": 50
+  },
+  {
+    "id": "a303",
+    "courseId": "c103",
+    "title": "Mini Project",
+    "description": "Build a small artifact that demonstrates the current unit.",
+    "dueDate": "2026-07-26T23:59",
+    "pointsPossible": 100
+  },
+  {
+    "id": "a304",
+    "courseId": "c103",
+    "title": "Analysis & Reflection",
+    "description": "Explain design or technical choices and tradeoffs.",
+    "dueDate": "2026-08-08T23:59",
+    "pointsPossible": 50
+  },
+  {
+    "id": "a305",
+    "courseId": "c103",
+    "title": "Applied Challenge",
+    "description": "Solve a more open-ended problem using course techniques.",
+    "dueDate": "2026-08-21T23:59",
+    "pointsPossible": 100
+  },
+  {
+    "id": "a306",
+    "courseId": "c103",
+    "title": "Final Synthesis",
+    "description": "Connect the major ideas from the course in one submission.",
+    "dueDate": "2026-09-01T23:59",
+    "pointsPossible": 125
+  },
+  {
+    "id": "a401",
+    "courseId": "c104",
+    "title": "Foundations Checkpoint",
+    "description": "Short exercise covering the first module.",
+    "dueDate": "2026-07-05T23:59",
+    "pointsPossible": 25
+  },
+  {
+    "id": "a402",
+    "courseId": "c104",
+    "title": "Concept Practice",
+    "description": "Apply the core concepts from weeks 1–2.",
+    "dueDate": "2026-07-18T23:59",
+    "pointsPossible": 50
+  },
+  {
+    "id": "a403",
+    "courseId": "c104",
+    "title": "Mini Project",
+    "description": "Build a small artifact that demonstrates the current unit.",
+    "dueDate": "2026-07-31T23:59",
+    "pointsPossible": 100
+  },
+  {
+    "id": "a404",
+    "courseId": "c104",
+    "title": "Analysis & Reflection",
+    "description": "Explain design or technical choices and tradeoffs.",
+    "dueDate": "2026-08-13T23:59",
+    "pointsPossible": 50
+  },
+  {
+    "id": "a405",
+    "courseId": "c104",
+    "title": "Applied Challenge",
+    "description": "Solve a more open-ended problem using course techniques.",
+    "dueDate": "2026-08-26T23:59",
+    "pointsPossible": 100
+  },
+  {
+    "id": "a406",
+    "courseId": "c104",
+    "title": "Final Synthesis",
+    "description": "Connect the major ideas from the course in one submission.",
+    "dueDate": "2026-09-02T23:59",
+    "pointsPossible": 125
+  }
+]
