@@ -3,7 +3,7 @@
     "id": "a101",
     "courseId": "c101",
     "title": "Foundations Checkpoint",
-    "description": "Short exercise covering the first module.",
+    "description": "Compare arrays and linked lists for indexed access, insertion, and deletion. Give the time complexity of each operation and explain one practical tradeoff. Submit your explanation as text.",
     "dueDate": "2026-07-01T23:59",
     "pointsPossible": 25
   },
@@ -11,7 +11,7 @@
     "id": "a102",
     "courseId": "c101",
     "title": "Concept Practice",
-    "description": "Apply the core concepts from weeks 1–2.",
+    "description": "Write pseudocode for a stack and a queue. Trace both structures through five operations and explain how underflow is handled. Submit the pseudocode and trace as text.",
     "dueDate": "2026-07-14T23:59",
     "pointsPossible": 50
   },
@@ -19,7 +19,7 @@
     "id": "a103",
     "courseId": "c101",
     "title": "Mini Project",
-    "description": "Build a small artifact that demonstrates the current unit.",
+    "description": "Design a binary search tree with insert and search operations. Submit pseudocode, example inputs and outputs, and an analysis of balanced versus worst-case performance.",
     "dueDate": "2026-07-27T23:59",
     "pointsPossible": 100
   },
@@ -27,7 +27,7 @@
     "id": "a104",
     "courseId": "c101",
     "title": "Analysis & Reflection",
-    "description": "Explain design or technical choices and tradeoffs.",
+    "description": "Compare breadth-first and depth-first traversal on a small graph. Show the visit order, explain your choice of data structure, and discuss when each traversal is useful.",
     "dueDate": "2026-08-09T23:59",
     "pointsPossible": 50
   },
@@ -35,7 +35,7 @@
     "id": "a105",
     "courseId": "c101",
     "title": "Applied Challenge",
-    "description": "Solve a more open-ended problem using course techniques.",
+    "description": "Propose a hash-table design for a contact directory. Explain hashing, collision handling, resizing, and expected lookup cost. Include three edge cases and their expected behavior.",
     "dueDate": "2026-08-22T23:59",
     "pointsPossible": 100
   },
@@ -43,7 +43,7 @@
     "id": "a106",
     "courseId": "c101",
     "title": "Final Synthesis",
-    "description": "Connect the major ideas from the course in one submission.",
+    "description": "Design a route-planning solution using graphs. Submit pseudocode, a worked example, complexity analysis, and a justification of the algorithm and data structures you selected.",
     "dueDate": "2026-09-02T23:59",
     "pointsPossible": 125
   },
@@ -51,7 +51,7 @@
     "id": "a201",
     "courseId": "c102",
     "title": "Foundations Checkpoint",
-    "description": "Short exercise covering the first module.",
+    "description": "Write semantic HTML for a course page with navigation, headings, and an assignment form. Explain the accessible name and label of each interactive element.",
     "dueDate": "2026-07-03T23:59",
     "pointsPossible": 25
   },
@@ -59,7 +59,7 @@
     "id": "a202",
     "courseId": "c102",
     "title": "Concept Practice",
-    "description": "Apply the core concepts from weeks 1–2.",
+    "description": "Submit CSS for a responsive two-column layout that collapses on small screens. Explain keyboard focus styles, contrast choices, and how long content is handled.",
     "dueDate": "2026-07-16T23:59",
     "pointsPossible": 50
   },
@@ -67,7 +67,7 @@
     "id": "a203",
     "courseId": "c102",
     "title": "Mini Project",
-    "description": "Build a small artifact that demonstrates the current unit.",
+    "description": "Write a typed React component for a course card and a filtered course list. Submit the component code as text and explain props, stable keys, and empty states.",
     "dueDate": "2026-07-29T23:59",
     "pointsPossible": 100
   },
@@ -75,7 +75,7 @@
     "id": "a204",
     "courseId": "c102",
     "title": "Analysis & Reflection",
-    "description": "Explain design or technical choices and tradeoffs.",
+    "description": "Review a form workflow for validation, error recovery, and accessibility. Describe three failure cases and propose specific changes, including how success is announced.",
     "dueDate": "2026-08-11T23:59",
     "pointsPossible": 50
   },
@@ -83,7 +83,7 @@
     "id": "a205",
     "courseId": "c102",
     "title": "Applied Challenge",
-    "description": "Solve a more open-ended problem using course techniques.",
+    "description": "Design a routed student dashboard with shared state. Submit a route map, TypeScript state model, and pseudocode for preventing access to another student's work.",
     "dueDate": "2026-08-24T23:59",
     "pointsPossible": 100
   },
@@ -91,7 +91,7 @@
     "id": "a206",
     "courseId": "c102",
     "title": "Final Synthesis",
-    "description": "Connect the major ideas from the course in one submission.",
+    "description": "Submit a technical design for an accessible learning app. Cover component boundaries, state updates, validation, responsive behavior, and a manual verification checklist.",
     "dueDate": "2026-09-02T23:59",
     "pointsPossible": 125
   },
@@ -99,7 +99,7 @@
     "id": "a301",
     "courseId": "c103",
     "title": "Foundations Checkpoint",
-    "description": "Short exercise covering the first module.",
+    "description": "Describe the variables and units in a fictional student-performance dataset. Identify numeric and categorical fields and explain why correlation does not establish causation.",
     "dueDate": "2026-06-30T23:59",
     "pointsPossible": 25
   },
@@ -107,7 +107,7 @@
     "id": "a302",
     "courseId": "c103",
     "title": "Concept Practice",
-    "description": "Apply the core concepts from weeks 1–2.",
+    "description": "Propose a cleaning plan for missing values, duplicate records, and inconsistent date formats. Include a before-and-after example and justify which records should be retained.",
     "dueDate": "2026-07-13T23:59",
     "pointsPossible": 50
   },
@@ -115,7 +115,7 @@
     "id": "a303",
     "courseId": "c103",
     "title": "Mini Project",
-    "description": "Build a small artifact that demonstrates the current unit.",
+    "description": "Provide an exploratory analysis of a small fictional dataset. Submit summary statistics, descriptions of two appropriate charts, and limitations of the sample.",
     "dueDate": "2026-07-26T23:59",
     "pointsPossible": 100
   },
@@ -123,7 +123,7 @@
     "id": "a304",
     "courseId": "c103",
     "title": "Analysis & Reflection",
-    "description": "Explain design or technical choices and tradeoffs.",
+    "description": "Evaluate a reported relationship between submission timing and grades. Discuss selection bias, confounding factors, sample size, and what the evidence cannot establish.",
     "dueDate": "2026-08-08T23:59",
     "pointsPossible": 50
   },
@@ -131,7 +131,7 @@
     "id": "a305",
     "courseId": "c103",
     "title": "Applied Challenge",
-    "description": "Solve a more open-ended problem using course techniques.",
+    "description": "Design a train-validation-test split for a prediction task. Explain leakage prevention, baseline performance, and the evaluation metric you would use.",
     "dueDate": "2026-08-21T23:59",
     "pointsPossible": 100
   },
@@ -139,7 +139,7 @@
     "id": "a306",
     "courseId": "c103",
     "title": "Final Synthesis",
-    "description": "Connect the major ideas from the course in one submission.",
+    "description": "Write an analysis brief covering data preparation, exploratory findings, model evaluation, and limitations. Distinguish measured results from hypotheses and recommendations.",
     "dueDate": "2026-09-01T23:59",
     "pointsPossible": 125
   },
@@ -147,7 +147,7 @@
     "id": "a401",
     "courseId": "c104",
     "title": "Foundations Checkpoint",
-    "description": "Short exercise covering the first module.",
+    "description": "Frame a usability problem for a fictional campus service. Identify the users, their task, current obstacles, and a measurable success criterion without assuming a solution.",
     "dueDate": "2026-07-05T23:59",
     "pointsPossible": 25
   },
@@ -155,7 +155,7 @@
     "id": "a402",
     "courseId": "c104",
     "title": "Concept Practice",
-    "description": "Apply the core concepts from weeks 1–2.",
+    "description": "Create five non-leading interview questions and a consent introduction. Explain how you would recruit participants and protect their privacy.",
     "dueDate": "2026-07-18T23:59",
     "pointsPossible": 50
   },
@@ -163,7 +163,7 @@
     "id": "a403",
     "courseId": "c104",
     "title": "Mini Project",
-    "description": "Build a small artifact that demonstrates the current unit.",
+    "description": "Describe a low-fidelity prototype for the campus service. Submit a screen-by-screen flow, key interactions, and how errors and empty states are communicated.",
     "dueDate": "2026-07-31T23:59",
     "pointsPossible": 100
   },
@@ -171,7 +171,7 @@
     "id": "a404",
     "courseId": "c104",
     "title": "Analysis & Reflection",
-    "description": "Explain design or technical choices and tradeoffs.",
+    "description": "Critique your prototype against usability and accessibility principles. Explain three design tradeoffs and separate user evidence from your own assumptions.",
     "dueDate": "2026-08-13T23:59",
     "pointsPossible": 50
   },
@@ -179,7 +179,7 @@
     "id": "a405",
     "courseId": "c104",
     "title": "Applied Challenge",
-    "description": "Solve a more open-ended problem using course techniques.",
+    "description": "Write a usability-test plan with three tasks, observation criteria, and a way to measure task success. Explain how you would avoid coaching participants.",
     "dueDate": "2026-08-26T23:59",
     "pointsPossible": 100
   },
@@ -187,7 +187,7 @@
     "id": "a406",
     "courseId": "c104",
     "title": "Final Synthesis",
-    "description": "Connect the major ideas from the course in one submission.",
+    "description": "Write a product-design case study connecting the problem, research, prototype, evaluation, and revisions. Include remaining accessibility concerns and next steps.",
     "dueDate": "2026-09-02T23:59",
     "pointsPossible": 125
   }

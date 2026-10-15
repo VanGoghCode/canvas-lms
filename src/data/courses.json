@@ -5,7 +5,7 @@
     "title": "Data Structures & Algorithms",
     "instructorId": "s01",
     "description": "A practical introduction to core data structures, algorithmic thinking, and complexity analysis.",
-    "syllabus": "We will cover arrays, linked structures, stacks, queues, trees, graphs, hashing, sorting, searching, and algorithm analysis. Grades are based on six assignments. Late submissions are accepted for up to 48 hours with a small penalty in a real course; this demo does not enforce penalties."
+    "syllabus": "We will cover arrays, linked structures, stacks, queues, trees, graphs, hashing, sorting, searching, and algorithm analysis. Grades are based on six assignments weighted by points possible. Late work is accepted through September 5, 2026, 23:59 UTC without an automatic penalty. Graded submissions are locked."
   },
   {
     "id": "c102",

@@ -1,230 +1,316 @@
-import { useMemo, useState } from 'react';
+import { InfoButton } from '../components/InfoButton';
+import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { MetricChart } from '../components/MetricChart';
 import { buildCourseAnalytics, type CourseAnalytics } from '../lib/analytics';
 import { useLms } from '../lib/LmsContext';
 
-function shortLabel(value: string) {
-  return value.length > 18 ? `${value.slice(0, 16)}…` : value;
-}
+const noFilters = { assignmentId: '', dateFrom: '', dateTo: '' };
 
-function formatChartDate(value: string) {
-  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(`${value}T00:00:00`));
-}
-
-function InsightsPanel({ analytics }: { analytics: CourseAnalytics }) {
-  const scoredAssignments = analytics.assignmentMetrics.filter((item) => item.averageScore != null);
-  const strongest = scoredAssignments.reduce<(typeof scoredAssignments)[number] | undefined>(
-    (best, item) => !best || (item.averageScore ?? 0) > (best.averageScore ?? 0) ? item : best,
-    undefined,
-  );
-  const mostDifficult = scoredAssignments.reduce<(typeof scoredAssignments)[number] | undefined>(
-    (lowest, item) => !lowest || (item.averageScore ?? 0) < (lowest.averageScore ?? 0) ? item : lowest,
-    undefined,
-  );
-  const highEngagement = analytics.cohorts.find((cohort) => cohort.cohort === 'High engagement');
-  const comparisonCohort = [...analytics.cohorts]
-    .reverse()
-    .find((cohort) => cohort.cohort !== 'High engagement' && cohort.averageScore != null);
-
-  return (
-    <section className="analytics-insights" aria-labelledby="insights-heading">
-      <div>
-        <span className="eyebrow">What the data suggests</span>
-        <h2 id="insights-heading">Performance insights</h2>
-      </div>
-      <p>
-        This view includes {analytics.totalSubmissions} submissions, with {analytics.gradedSubmissions} graded. Student performance averages {analytics.overallAverage == null ? 'not yet available' : `${analytics.overallAverage}%`}, while assignment completion is {analytics.overallCompletion}%. {analytics.overallCompletion < 90 ? 'Incomplete work is currently the largest visible drag on overall results.' : 'Participation is strong enough that score quality, rather than missing work, is the main performance driver.'}
-      </p>
-      <p>
-        {strongest && mostDifficult
-          ? strongest.assignmentId === mostDifficult.assignmentId
-            ? `${strongest.assignment} averages ${strongest.averageScore}%. With one assignment in scope, expand the filter to compare where students encounter the most difficulty.`
-            : `${strongest.assignment} is the strongest area at ${strongest.averageScore}%, while ${mostDifficult.assignment} is the most difficult at ${mostDifficult.averageScore}%. The gap points to where review materials or targeted instruction may have the greatest impact.`
-          : 'There are not enough graded assignments in this filter range to identify a strongest or most difficult topic yet.'}
-      </p>
-      <p>
-        {highEngagement?.averageScore != null && comparisonCohort?.averageScore != null
-          ? highEngagement.averageScore >= comparisonCohort.averageScore
-            ? `Submission consistency is positively associated with success: the high-engagement cohort averages ${highEngagement.averageScore}%, compared with ${comparisonCohort.averageScore}% for the ${comparisonCohort.cohort.toLowerCase()} cohort.`
-            : `Completion alone does not explain the score pattern in this range: the high-engagement cohort averages ${highEngagement.averageScore}%, compared with ${comparisonCohort.averageScore}% for the ${comparisonCohort.cohort.toLowerCase()} cohort.`
-          : 'Cohort score differences will become clearer as more students submit and receive grades.'}{' '}
-        {analytics.onTimeAverage != null && analytics.lateAverage != null
-          ? `On-time work averages ${analytics.onTimeAverage}%, compared with ${analytics.lateAverage}% for late submissions.`
-          : 'The current range does not contain enough both on-time and late graded work for a timing comparison.'}
-      </p>
-    </section>
-  );
-}
-
-function ChartCard({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
-  return (
-    <section className="card analytics-chart-card">
-      <header><h2>{title}</h2><p>{description}</p></header>
-      <div className="chart-frame" role="img" aria-label={`${title}. ${description}`}>{children}</div>
-    </section>
-  );
-}
-
-export default function InstructorAnalyticsPage() {
+/** Filters → one analytics object → insights, KPIs, charts, and cohort table. */
+export function InstructorAnalyticsPage() {
   const { session, courses, assignments, submissions, enrollments } = useLms();
-  const ownedCourses = courses.filter((course) => course.instructorId === session?.userId);
-  const [courseId, setCourseId] = useState(ownedCourses[0]?.id ?? '');
-  const [assignmentId, setAssignmentId] = useState('');
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
+  const myCourses = courses.filter((c) => c.instructorId === session!.userId);
+  const [courseId, setCourseId] = useState(myCourses[0]?.id ?? '');
+  const [filters, setFilters] = useState(noFilters);
+  const setFilter = (key: keyof typeof noFilters, value: string) =>
+    setFilters({ ...filters, [key]: value });
 
-  const courseAssignments = assignments.filter((assignment) => assignment.courseId === courseId);
-  const analytics = useMemo(
-    () => buildCourseAnalytics(courseId, { assignmentId, dateFrom, dateTo }, assignments, submissions, enrollments),
-    [assignmentId, assignments, courseId, dateFrom, dateTo, enrollments, submissions],
+  if (myCourses.length === 0) return <Navigate to="/instructor" replace />;
+
+  const course = myCourses.find((c) => c.id === courseId) ?? myCourses[0];
+  const invalidRange = Boolean(
+    filters.dateFrom && filters.dateTo && filters.dateFrom > filters.dateTo,
   );
-
-  if (session?.role !== 'instructor') return <Navigate to="/dashboard" replace />;
-  if (ownedCourses.length === 0) return <Navigate to="/instructor" replace />;
-
-  const selectedCourse = ownedCourses.find((course) => course.id === courseId) ?? ownedCourses[0];
+  const data = buildCourseAnalytics(course.id, filters, assignments, submissions, enrollments);
+  const chartDate = (day: string) =>
+    new Date(`${day}T00:00:00Z`).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      timeZone: 'UTC',
+    });
+  const pct = (value: number | null) => (value == null ? '—' : `${value}%`);
 
   return (
-    <div className="page analytics-page">
-      <header className="page-header analytics-page-header">
+    <div className="page">
+      <header>
         <span className="eyebrow">Instructor analytics</span>
         <h1>Course performance</h1>
-        <p className="muted">Explore grade, completion, and engagement patterns for {selectedCourse.title}.</p>
+        <p className="muted">
+          Evidence for your next teaching decision.{' '}
+          <InfoButton title="Course analytics">
+            <p>
+              Grade, completion, and submission patterns for {course.title}. Date filters select
+              assignment deadlines in UTC, not submission dates. All received work for those
+              assignments remains included. Future missing work is never scored zero; pending grades
+              are excluded from current grades.
+            </p>
+          </InfoButton>
+        </p>
       </header>
 
-      <section className="card analytics-filters" aria-labelledby="filters-heading">
-        <div className="filter-heading">
-          <div><h2 id="filters-heading">Filter analytics</h2><p>All charts and insights update together.</p></div>
-          <button className="button button-secondary" type="button" onClick={() => { setAssignmentId(''); setDateFrom(''); setDateTo(''); }}>Reset filters</button>
-        </div>
-        <div className="filter-grid">
-          {ownedCourses.length > 1 && (
-            <label htmlFor="analytics-course">Course
-              <select id="analytics-course" value={courseId} onChange={(event) => { setCourseId(event.target.value); setAssignmentId(''); }}>
-                {ownedCourses.map((course) => <option key={course.id} value={course.id}>{course.code} · {course.title}</option>)}
-              </select>
-            </label>
-          )}
-          <label htmlFor="analytics-assignment">Assignment
-            <select id="analytics-assignment" value={assignmentId} onChange={(event) => setAssignmentId(event.target.value)}>
-              <option value="">All assignments</option>
-              {courseAssignments.map((assignment) => <option key={assignment.id} value={assignment.id}>{assignment.title}</option>)}
+      <section className="card filters">
+        {myCourses.length > 1 && (
+          <label>
+            Course
+            <select
+              value={course.id}
+              onChange={(e) => {
+                setCourseId(e.target.value);
+                setFilter('assignmentId', '');
+              }}
+            >
+              {myCourses.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.code} · {c.title}
+                </option>
+              ))}
             </select>
           </label>
-          <label htmlFor="analytics-date-from">From
-            <input id="analytics-date-from" type="date" value={dateFrom} max={dateTo || undefined} onChange={(event) => setDateFrom(event.target.value)} />
-          </label>
-          <label htmlFor="analytics-date-to">To
-            <input id="analytics-date-to" type="date" value={dateTo} min={dateFrom || undefined} onChange={(event) => setDateTo(event.target.value)} />
-          </label>
-        </div>
-      </section>
-
-      <InsightsPanel analytics={analytics} />
-
-      <div className="analytics-kpis" aria-label="Analytics summary">
-        <div><span>Average grade</span><strong>{analytics.overallAverage == null ? '—' : `${analytics.overallAverage}%`}</strong></div>
-        <div><span>Completion</span><strong>{analytics.overallCompletion}%</strong></div>
-        <div><span>Submissions</span><strong>{analytics.totalSubmissions}</strong></div>
-        <div><span>Graded</span><strong>{analytics.gradedSubmissions}</strong></div>
-      </div>
-
-      <div className="analytics-chart-grid">
-        <ChartCard title="Grade distribution" description="Students grouped by their points-based grade in the selected scope.">
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={analytics.gradeDistribution} margin={{ top: 12, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="grade" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Bar dataKey="students" name="Students" fill="#1f5f8b" radius={[5, 5, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Assignment completion" description="Share of enrolled students who submitted each assignment.">
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={analytics.assignmentMetrics} margin={{ top: 12, right: 18, left: -10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="assignment" tickFormatter={shortLabel} />
-              <YAxis domain={[0, 100]} unit="%" />
-              <Tooltip formatter={(value) => [`${value}%`, 'Completion']} />
-              <Line type="monotone" dataKey="completionRate" name="Completion" stroke="#277c5c" strokeWidth={3} dot={{ r: 4 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Engagement over time" description="Daily submission activity and unique active students.">
-          <ResponsiveContainer width="100%" height={280}>
-            <AreaChart data={analytics.engagementTimeline} margin={{ top: 12, right: 18, left: -20, bottom: 5 }}>
-              <defs>
-                <linearGradient id="submissionArea" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#1f5f8b" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#1f5f8b" stopOpacity={0.03} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="date" tickFormatter={formatChartDate} />
-              <YAxis allowDecimals={false} />
-              <Tooltip labelFormatter={(value) => formatChartDate(String(value))} />
-              <Legend />
-              <Area type="monotone" dataKey="submissions" name="Submissions" stroke="#1f5f8b" strokeWidth={2} fill="url(#submissionArea)" />
-              <Line type="monotone" dataKey="activeStudents" name="Active students" stroke="#d27a2c" strokeWidth={2} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Scores by assignment" description="Average score as a percentage of points possible.">
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={analytics.assignmentMetrics} margin={{ top: 12, right: 10, left: -10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="assignment" tickFormatter={shortLabel} />
-              <YAxis domain={[0, 100]} unit="%" />
-              <Tooltip formatter={(value) => [`${value}%`, 'Average score']} />
-              <Bar dataKey="averageScore" name="Average score" fill="#7656a4" radius={[5, 5, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-      </div>
-
-      <section className="card cohort-section" aria-labelledby="cohort-heading">
-        <div className="section-heading">
-          <div><span className="eyebrow">Cohort comparison</span><h2 id="cohort-heading">Performance by engagement group</h2></div>
-          <span>{analytics.cohorts.length} groups present</span>
-        </div>
-        <p className="cohort-description">Because seeded demographic profiles are intentionally blank, cohorts are based on assignment completion: high engagement is 80–100%, moderate is 50–79.9%, and low is below 50%.</p>
-        {analytics.cohorts.length === 0 ? (
-          <p className="empty">No cohort data is available for the current filters.</p>
-        ) : (
-          <div className="table-wrap">
-            <table>
-              <thead><tr><th>Student group</th><th>Students</th><th>Completion</th><th>Average score</th></tr></thead>
-              <tbody>{analytics.cohorts.map((cohort) => (
-                <tr key={cohort.cohort}>
-                  <td><strong>{cohort.cohort}</strong></td>
-                  <td>{cohort.students}</td>
-                  <td>{cohort.completionRate}%</td>
-                  <td>{cohort.averageScore == null ? 'Awaiting grades' : `${cohort.averageScore}%`}</td>
-                </tr>
-              ))}</tbody>
-            </table>
-          </div>
         )}
+        <label>
+          Assignment
+          <select
+            value={filters.assignmentId}
+            onChange={(e) => setFilter('assignmentId', e.target.value)}
+          >
+            <option value="">All assignments</option>
+            {assignments
+              .filter((a) => a.courseId === course.id)
+              .map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.title}
+                </option>
+              ))}
+          </select>
+        </label>
+        <label>
+          Due from
+          <input
+            type="date"
+            value={filters.dateFrom}
+            max={filters.dateTo || undefined}
+            onChange={(e) => setFilter('dateFrom', e.target.value)}
+          />
+        </label>
+        <label>
+          Due through
+          <input
+            type="date"
+            value={filters.dateTo}
+            min={filters.dateFrom || undefined}
+            onChange={(e) => setFilter('dateTo', e.target.value)}
+          />
+        </label>
+        <button className="button" type="button" onClick={() => setFilters(noFilters)}>
+          Reset filters
+        </button>
       </section>
+
+      {invalidRange ? (
+        <p className="note" role="alert">
+          Choose an end date on or after the start date, or reset the filters.
+        </p>
+      ) : (
+        <>
+          {!data.assignmentMetrics.length && (
+            <p className="note" role="status">
+              No assignments match these filters. Adjust the dates or reset the filters to see
+              course activity.
+            </p>
+          )}
+          <Insights data={data} />
+
+          <div className="kpis">
+            <div>
+              <span>Average grade</span>
+              <strong>{pct(data.overallAverage)}</strong>
+            </div>
+            <div>
+              <span>Due-work completion</span>
+              <strong>{pct(data.overallCompletion)}</strong>
+            </div>
+            <div>
+              <span>Submissions</span>
+              <strong>{data.totalSubmissions}</strong>
+            </div>
+            <div>
+              <span>Graded</span>
+              <strong>{data.gradedSubmissions}</strong>
+            </div>
+          </div>
+
+          <div className="grid">
+            <MetricChart
+              title="Grade distribution"
+              description="Students grouped by their points-based grade."
+              series={['Students']}
+              unit=""
+              rows={data.gradeDistribution.map((g) => ({ label: g.grade, values: [g.students] }))}
+            />
+            <MetricChart
+              title="Assignment completion"
+              description="Share of enrolled students who submitted each assignment."
+              series={['Completion']}
+              max={100}
+              rows={data.assignmentMetrics.map((a) => ({
+                label: a.assignment,
+                values: [a.completionRate],
+              }))}
+            />
+            <MetricChart
+              title="Submission activity over time"
+              description="Daily latest submissions and unique students (UTC); not a full attempt history."
+              series={['Submissions', 'Active students']}
+              unit=""
+              rows={data.engagementTimeline.map((d) => ({
+                label: chartDate(d.date),
+                values: [d.submissions, d.activeStudents],
+              }))}
+            />
+            <MetricChart
+              title="Scores by assignment"
+              description="Average score as a percentage of points possible."
+              series={['Average score']}
+              max={100}
+              rows={data.assignmentMetrics.map((a) => ({
+                label: a.assignment,
+                values: [a.averageScore],
+              }))}
+            />
+          </div>
+
+          <section className="card">
+            <h2>
+              Performance by engagement group{' '}
+              <InfoButton title="Engagement groups">
+                <p>
+                  Groups use due-work completion: high is at least 80%, moderate at least 50%, and
+                  low below 50%. Submission counts are a participation proxy, not evidence of study
+                  time. Group differences do not establish causation.
+                </p>
+              </InfoButton>
+            </h2>
+            {data.cohorts.length === 0 ? (
+              <p className="muted">No cohort data for these filters.</p>
+            ) : (
+              <div
+                className="table-wrap"
+                tabIndex={0}
+                role="region"
+                aria-label="Scrollable data table"
+              >
+                <table
+                  className="data-table cohort-table"
+                  aria-label="Performance by engagement group"
+                >
+                  <colgroup>
+                    <col style={{ width: '40%' }} />
+                    <col style={{ width: '15%' }} />
+                    <col style={{ width: '20%' }} />
+                    <col style={{ width: '25%' }} />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th scope="col">Student group</th>
+                      <th scope="col" className="numeric">
+                        Students
+                      </th>
+                      <th scope="col" className="numeric">
+                        Completion
+                      </th>
+                      <th scope="col" className="numeric">
+                        Average score
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.cohorts.map((c) => (
+                      <tr key={c.cohort}>
+                        <th scope="row">{c.cohort}</th>
+                        <td className="numeric">{c.students}</td>
+                        <td className="numeric">{c.completionRate}%</td>
+                        <td className="numeric">
+                          {c.averageScore == null ? 'Awaiting grades' : `${c.averageScore}%`}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        </>
+      )}
     </div>
+  );
+}
+
+/** Three plain-language sentences generated from the numbers. */
+function Insights({ data }: { data: CourseAnalytics }) {
+  const scored = data.assignmentMetrics
+    .filter((a) => a.averageScore != null)
+    .sort((a, b) => a.averageScore! - b.averageScore!);
+  const hardest = scored[0];
+  const easiest = scored[scored.length - 1];
+  const high = data.cohorts.find((c) => c.cohort === 'High engagement');
+  const other = [...data.cohorts].reverse().find((c) => c !== high && c.averageScore != null);
+
+  const overview =
+    `This view includes ${data.totalSubmissions} submissions, with ${data.gradedSubmissions} graded. ` +
+    `Student performance averages ${data.overallAverage == null ? 'not yet available' : `${data.overallAverage}%`}, ` +
+    `while due-work completion is ${data.overallCompletion == null ? 'not yet available' : `${data.overallCompletion}%`}. ` +
+    'Missing overdue work counts as zero; pending grading does not. These descriptive figures do not establish causes of performance.';
+
+  const assignmentsText = !hardest
+    ? 'There are not enough graded assignments in this filter range to identify a strongest or most difficult topic yet.'
+    : hardest === easiest
+      ? `${easiest.assignment} averages ${easiest.averageScore}%. Widen the filter to compare assignments.`
+      : `${easiest.assignment} has the highest average submitted score at ${easiest.averageScore}%, and ${hardest.assignment} the lowest at ${hardest.averageScore}%. Different tasks and sample sizes mean this does not establish topic difficulty.`;
+
+  const cohortText =
+    high?.averageScore != null && other?.averageScore != null
+      ? `${
+          high.averageScore >= other.averageScore
+            ? 'This view shows a higher average submitted score in the high-completion group'
+            : 'Completion alone does not explain the score pattern in this range'
+        }: the high-engagement cohort averages ${high.averageScore}%, compared with ${other.averageScore}% for the ${other.cohort.toLowerCase()} cohort.`
+      : 'Cohort score differences will become clearer as more students submit and receive grades.';
+
+  const timingText =
+    data.onTimeAverage != null && data.lateAverage != null
+      ? `On-time work averages ${data.onTimeAverage}%, compared with ${data.lateAverage}% for late submissions.`
+      : 'The current range does not contain both on-time and late graded work for a timing comparison.';
+
+  return (
+    <section className="card dark stack">
+      <h2>
+        Performance insights{' '}
+        <InfoButton title="Understanding these insights">
+          <p>{overview}</p>
+          <p>{assignmentsText}</p>
+          <p>
+            {cohortText} {timingText}
+          </p>
+        </InfoButton>
+      </h2>
+      <div className="insight-grid">
+        <div>
+          <span>Highest submitted score</span>
+          <strong>{easiest ? `${easiest.averageScore}%` : '—'}</strong>
+          <small>{easiest?.assignment ?? 'No graded work'}</small>
+        </div>
+        <div>
+          <span>Lowest submitted score</span>
+          <strong>{hardest ? `${hardest.averageScore}%` : '—'}</strong>
+          <small>{hardest?.assignment ?? 'No graded work'}</small>
+        </div>
+        <div>
+          <span>Awaiting grading</span>
+          <strong>{data.totalSubmissions - data.gradedSubmissions}</strong>
+          <small>Received responses</small>
+        </div>
+      </div>
+    </section>
   );
 }

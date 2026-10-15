@@ -1,35 +1,34 @@
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { emptyStudentProfile, StudentProfileForm } from '../components/StudentProfileForm';
-import { useLms } from '../lib/LmsContext';
+import { InfoButton } from '../components/InfoButton';
+import { Link, Navigate } from 'react-router-dom';
+import { StudentProfileForm } from '../components/StudentProfileForm';
+import { emptyStudentProfile } from '../lib/data';
+import { homePath, useLms } from '../lib/LmsContext';
 
 export function RegisterPage() {
   const { students, session, registerStudent } = useLms();
-  const navigate = useNavigate();
-
-  if (session) {
-    return <Navigate to={session.role === 'student' ? '/dashboard' : '/instructor'} replace />;
-  }
+  if (session) return <Navigate to={homePath(session.role)} replace />; // also runs right after registering
 
   return (
-    <main className="registration-page">
-      <div className="registration-container">
-        <header className="registration-header">
-          <Link className="brand-link" to="/login">Canvas Lite</Link>
-          <span className="eyebrow">Student registration</span>
-          <h1>Create your student record</h1>
-          <p className="muted">Provide the information the university needs to create your enrollment record.</p>
-        </header>
-        <StudentProfileForm
-          initialValue={emptyStudentProfile}
-          submitLabel="Create student account"
-          emailExists={(email) => students.some((student) => student.email.toLowerCase() === email.toLowerCase())}
-          onSubmit={(profile) => {
-            registerStudent(profile);
-            navigate('/dashboard');
-          }}
-        />
-        <p className="form-footer">Already have a demo account? <Link to="/login">Return to login</Link></p>
-      </div>
+    <main className="page narrow">
+      <header>
+        <Link to="/login">← Back to login</Link>
+        <h1>Create your student record</h1>
+        <p className="muted">
+          Name and email are required.{' '}
+          <InfoButton title="Creating a student account">
+            <p>
+              Your student profile is saved in this browser. After registration, browse the course
+              catalog and enroll in your first course. You can edit optional profile details later.
+            </p>
+          </InfoButton>
+        </p>
+      </header>
+      <StudentProfileForm
+        initialValue={emptyStudentProfile}
+        submitLabel="Create student account"
+        emailExists={(email) => students.some((s) => s.email.toLowerCase() === email.toLowerCase())}
+        onSubmit={registerStudent}
+      />
     </main>
   );
 }

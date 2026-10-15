@@ -1,49 +1,33 @@
-import resourcesData from '../data/resources.json';
+// Rule-based study suggestions (no AI): resources come from data/resources.json.
+import resources from '../data/resources.json';
 import type { Assignment, Course, Enrollment, Submission } from '../types';
+import { ACADEMIC_DATE, findSubmission, studentCourses, time } from './data';
 import { calculateCurrentCourseGrade } from './grading';
 
-export type ResourceDifficulty = 'remedial' | 'core' | 'advanced' | 'enrichment';
-export type PerformanceBand = 'struggling' | 'developing' | 'thriving';
+type Band = 'struggling' | 'developing' | 'thriving';
+type Resource = (typeof resources)[number];
+type CoursePerformance = ReturnType<typeof coursePerformance>;
 
-export interface LearningResource {
-  id: string;
-  title: string;
-  description: string;
-  estimatedMinutes: number;
-  difficulty: ResourceDifficulty;
-  topics: string[];
-  courseIds: string[];
-}
+// Resource difficulties that suit each grade band.
+const DIFFICULTIES: Record<Band, string[]> = {
+  struggling: ['remedial', 'core'],
+  developing: ['core'],
+  thriving: ['advanced', 'enrichment'],
+};
 
-export interface StudentRecommendation extends LearningResource {
-  courseCode: string;
-  reason: string;
-}
+// An assignment's topic is the first one whose keyword appears in its title or description.
+const TOPIC_KEYWORDS: [string, string[]][] = [
+  ['foundations', ['foundation', 'checkpoint', 'fundamental']],
+  ['practice', ['practice', 'exercise', 'drill']],
+  ['project', ['project', 'prototype', 'build']],
+  ['analysis', ['analysis', 'analyze', 'reflection', 'evaluate']],
+  ['application', ['applied', 'application', 'challenge']],
+  ['synthesis', ['synthesis', 'final', 'integrate']],
+];
 
-export interface PacingSuggestion {
-  status: 'adjust' | 'maintain' | 'stretch';
-  title: string;
-  message: string;
-}
+const DAY_MS = 24 * 60 * 60 * 1000;
 
-interface CoursePerformance {
-  course: Course;
-  percentage: number | null;
-  band: PerformanceBand;
-  weakestTopic: string;
-  hasMissingWork: boolean;
-}
-
-export const learningResources = resourcesData as LearningResource[];
-
-const DAY_IN_MS = 24 * 60 * 60 * 1000;
-
-export function getPerformanceBand(percentage: number | null): PerformanceBand {
-  if (percentage == null || percentage < 70) return 'struggling';
-  if (percentage >= 90) return 'thriving';
-  return 'developing';
-}
-
+/** Top `limit` resources across the student's courses, best match first. */
 export function generateRecommendations(
   studentId: string,
   courses: Course[],
@@ -51,225 +35,190 @@ export function generateRecommendations(
   assignments: Assignment[],
   submissions: Submission[],
   limit = 3,
-  asOf = new Date(),
-): StudentRecommendation[] {
-  const courseIds = new Set(
-    enrollments
-      .filter((enrollment) => enrollment.studentId === studentId)
-      .map((enrollment) => enrollment.courseId),
+  asOf = ACADEMIC_DATE,
+) {
+  const performances = studentCourses(studentId, courses, enrollments).map((course) =>
+    coursePerformance(studentId, course, assignments, submissions, asOf),
   );
-  const performances = courses
-    .filter((course) => courseIds.has(course.id))
-    .map((course) => getCoursePerformance(studentId, course, assignments, submissions, asOf));
 
-  if (limit <= 0) return [];
-  if (performances.length === 0) {
-    return learningResources
-      .filter((resource) => resource.courseIds.includes('*'))
+  if (!performances.length) {
+    return resources
+      .filter((r) => r.courseIds.includes('*'))
       .slice(0, limit)
-      .map((resource) => ({
-        ...resource,
+      .map((r) => ({
+        ...r,
         courseCode: 'All courses',
         reason: 'Build a useful learning routine while your course activity gets underway.',
       }));
   }
 
-  return learningResources
+  return resources
     .flatMap((resource) => {
-      const matchingPerformances = performances.filter(
-        (performance) => (
-          resource.courseIds.includes(performance.course.id) || resource.courseIds.includes('*')
-        ) && isDifficultyMatch(resource.difficulty, performance.band),
-      );
-      if (matchingPerformances.length === 0) return [];
-
-      const bestMatch = matchingPerformances
-        .map((performance) => ({
-          performance,
-          score: scoreResource(resource, performance),
-        }))
-        .sort((a, b) => b.score - a.score || a.performance.course.id.localeCompare(b.performance.course.id))[0];
-
-      return [{
-        ...resource,
-        score: bestMatch.score,
-        recommendation: toRecommendation(resource, bestMatch.performance),
-      }];
+      // Pick the course this resource helps most.
+      const best = performances
+        .filter(
+          (p) =>
+            (resource.courseIds.includes(p.course.id) || resource.courseIds.includes('*')) &&
+            DIFFICULTIES[p.band].includes(resource.difficulty),
+        )
+        .map((p) => ({ p, score: matchScore(resource, p) }))
+        .sort((a, b) => b.score - a.score || a.p.course.id.localeCompare(b.p.course.id))[0];
+      return best
+        ? [{ score: best.score, recommendation: toRecommendation(resource, best.p) }]
+        : [];
     })
     .sort((a, b) => b.score - a.score || a.recommendation.id.localeCompare(b.recommendation.id))
     .slice(0, limit)
-    .map(({ recommendation }) => recommendation);
+    .map((item) => item.recommendation);
 }
 
+function coursePerformance(
+  studentId: string,
+  course: Course,
+  assignments: Assignment[],
+  submissions: Submission[],
+  asOf: Date,
+) {
+  const grade = calculateCurrentCourseGrade(studentId, course.id, assignments, submissions, asOf);
+  const ownAssignments = assignments.filter((a) => a.courseId === course.id);
+  const submitted = (a: Assignment) => findSubmission(submissions, a.id, studentId);
+  const ratio = (a: Assignment) =>
+    a.pointsPossible ? submitted(a)!.score! / a.pointsPossible : Infinity;
+
+  // Weakest assignment: first overdue missing one, else lowest score, else the first one.
+  const weakest =
+    ownAssignments.find((a) => time(a.dueDate) <= asOf.getTime() && !submitted(a)) ??
+    ownAssignments
+      .filter((a) => submitted(a)?.score != null)
+      .sort((a, b) => ratio(a) - ratio(b))[0] ??
+    ownAssignments[0];
+  const text = weakest ? `${weakest.title} ${weakest.description}`.toLowerCase() : '';
+  const percentage = grade.rawPercentage ?? 80;
+
+  return {
+    course,
+    band: (percentage < 70 ? 'struggling' : percentage >= 90 ? 'thriving' : 'developing') as Band,
+    weakestTopic:
+      TOPIC_KEYWORDS.find(([, words]) => words.some((w) => text.includes(w)))?.[0] ?? 'foundations',
+    hasMissingWork: grade.missingAssignments > 0,
+    hasGrade: grade.percentage != null,
+  };
+}
+
+function matchScore(resource: Resource, p: CoursePerformance) {
+  let score = resource.courseIds.includes(p.course.id) ? 8 : 2;
+  if (resource.topics.includes(p.weakestTopic)) score += 5;
+  if (p.band === 'struggling' && resource.topics.includes('study-skills')) score += 4;
+  if (p.hasMissingWork && resource.id === 'study-plan-reset') score += 5;
+  return score;
+}
+
+function toRecommendation(resource: Resource, p: CoursePerformance) {
+  const code = p.course.code;
+  const reasons: Record<Band, string> = {
+    struggling: `Build confidence in ${p.weakestTopic} for ${code}.`,
+    developing: `Target your weakest area in ${code}: ${p.weakestTopic}.`,
+    thriving: `Extend your strong performance in ${code}.`,
+  };
+  return {
+    ...resource,
+    courseCode: resource.courseIds.includes('*') ? 'All courses' : code,
+    reason: p.hasGrade
+      ? reasons[p.band]
+      : `Get started with core material for ${code}; no current grade is available yet.`,
+  };
+}
+
+/** One pacing tip from the student's submission history; the first matching rule wins. */
 export function getPacingSuggestion(
   studentId: string,
-  courses: Course[],
   enrollments: Enrollment[],
   assignments: Assignment[],
   submissions: Submission[],
-  asOf = new Date(),
-): PacingSuggestion {
-  const courseIds = new Set(
-    enrollments
-      .filter((enrollment) => enrollment.studentId === studentId)
-      .map((enrollment) => enrollment.courseId),
+  asOf = ACADEMIC_DATE,
+) {
+  const courseIds = [
+    ...new Set(enrollments.filter((e) => e.studentId === studentId).map((e) => e.courseId)),
+  ];
+  if (!courseIds.length)
+    return {
+      status: 'maintain',
+      title: 'Register for coursework first',
+      message:
+        'You have no enrolled courses yet. Browse the course catalog to enroll. Your study plan will update as you submit work.',
+    };
+  const mine = new Map(
+    assignments.filter((a) => courseIds.includes(a.courseId)).map((a) => [a.id, a]),
   );
-  const relevantAssignments = assignments.filter((assignment) => courseIds.has(assignment.courseId));
-  const relevantAssignmentIds = new Set(relevantAssignments.map((assignment) => assignment.id));
-  const studentSubmissions = submissions
-    .filter((submission) => submission.studentId === studentId && relevantAssignmentIds.has(submission.assignmentId))
-    .sort((a, b) => new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime());
-  const submittedAssignmentIds = new Set(studentSubmissions.map((submission) => submission.assignmentId));
-  const overdueCount = relevantAssignments.filter(
-    (assignment) => new Date(assignment.dueDate).getTime() < asOf.getTime()
-      && !submittedAssignmentIds.has(assignment.id),
-  ).length;
-  const lateCount = studentSubmissions.filter((submission) => {
-    const assignment = relevantAssignments.find((item) => item.id === submission.assignmentId);
-    return assignment != null
-      && new Date(submission.submittedAt).getTime() > new Date(assignment.dueDate).getTime();
-  }).length;
-  const lateRate = studentSubmissions.length === 0 ? 0 : lateCount / studentSubmissions.length;
-  const courseGrades = [...courseIds]
-    .map((courseId) => calculateCurrentCourseGrade(studentId, courseId, assignments, submissions, asOf).percentage)
-    .filter((percentage): percentage is number => percentage != null);
-  const averageGrade = courseGrades.length === 0
-    ? null
-    : courseGrades.reduce((total, percentage) => total + percentage, 0) / courseGrades.length;
-  const averageGapDays = getAverageSubmissionGap(studentSubmissions);
+  const done = submissions
+    .filter(
+      (s) =>
+        s.studentId === studentId &&
+        mine.has(s.assignmentId) &&
+        time(s.submittedAt) <= asOf.getTime(),
+    )
+    .sort((a, b) => time(a.submittedAt) - time(b.submittedAt));
 
-  if (studentSubmissions.length === 0) {
+  if (!done.length) {
     return {
       status: 'adjust',
       title: 'Start with a steady weekly rhythm',
-      message: 'No submission pattern is available yet. For the rest of the term, schedule two short work blocks per course each week and begin the next assignment at least three days before it is due.',
+      message:
+        'No submission pattern is available yet. For the rest of the term, schedule two short work blocks per course each week and begin the next assignment at least three days before it is due.',
     };
   }
 
-  if (overdueCount > 0 || lateRate >= 0.3 || (averageGrade != null && averageGrade < 70)) {
-    const reason = overdueCount > 0
-      ? `${overdueCount} overdue ${overdueCount === 1 ? 'assignment needs' : 'assignments need'} attention`
-      : lateRate >= 0.3
-        ? 'recent work is often arriving after the deadline'
-        : 'current grades show that the existing pace is not leaving enough time for mastery';
+  const overdue = [...mine.values()].filter(
+    (a) => time(a.dueDate) < asOf.getTime() && !done.some((s) => s.assignmentId === a.id),
+  ).length;
+  const lateRate =
+    done.filter((s) => time(s.submittedAt) > time(mine.get(s.assignmentId)!.dueDate)).length /
+    done.length;
+  const grades = courseIds
+    .map(
+      (id) =>
+        calculateCurrentCourseGrade(studentId, id, assignments, submissions, asOf).rawPercentage,
+    )
+    .filter((p): p is number => p != null);
+  const averageGrade = grades.length ? grades.reduce((a, b) => a + b, 0) / grades.length : null;
+  const averageGapDays =
+    (time(done[done.length - 1].submittedAt) - time(done[0].submittedAt)) /
+    Math.max(1, done.length - 1) /
+    DAY_MS;
+
+  if (overdue > 0 || lateRate >= 0.3 || (averageGrade != null && averageGrade < 70)) {
+    const reason =
+      overdue > 0
+        ? `${overdue} overdue ${overdue === 1 ? 'assignment needs' : 'assignments need'} attention`
+        : lateRate >= 0.3
+          ? 'recent work is often arriving after the deadline'
+          : 'your current grades are below 70%';
     return {
       status: 'adjust',
       title: 'Lighten the weekly crunch',
       message: `Adjust your workload because ${reason}. For the rest of the term, move one study block earlier in the week and focus on one high-impact task at a time before adding extra work.`,
     };
   }
-
-  if (averageGapDays != null && averageGapDays < 2 && studentSubmissions.length >= 3) {
+  if (done.length >= 3 && averageGapDays < 2) {
     return {
       status: 'adjust',
       title: 'Spread work more evenly',
-      message: 'Your submissions are clustered close together. For the rest of the term, distribute work across the week and leave a separate review block before each deadline.',
+      message:
+        'Your submissions are clustered close together. For the rest of the term, distribute work across the week and leave a separate review block before each deadline.',
     };
   }
-
   if (averageGrade != null && averageGrade >= 90 && lateRate < 0.1) {
     return {
       status: 'stretch',
       title: 'Keep your pace and add one stretch block',
-      message: 'Your strong grades and on-time pattern suggest your current workload is sustainable. Keep that rhythm for the rest of the term and reserve one optional weekly block for advanced material.',
+      message:
+        'Your current grades are strong and most submissions are on time. If your workload feels manageable, consider one optional weekly block for advanced material.',
     };
   }
-
   return {
     status: 'maintain',
     title: 'Maintain a consistent pace',
-    message: 'Your submission history supports a steady workload. For the rest of the term, keep your current weekly cadence and use one short review session to target the weakest topic highlighted in your recommendations.',
+    message:
+      'Most of your work has arrived on time. For the rest of the term, keep your current weekly cadence and use one short review session to target the weakest topic highlighted in your recommendations.',
   };
-}
-
-function getCoursePerformance(
-  studentId: string,
-  course: Course,
-  assignments: Assignment[],
-  submissions: Submission[],
-  asOf: Date,
-): CoursePerformance {
-  const courseAssignments = assignments.filter((assignment) => assignment.courseId === course.id);
-  const relevantSubmissions = submissions.filter((submission) => submission.studentId === studentId);
-  const grade = calculateCurrentCourseGrade(studentId, course.id, assignments, submissions, asOf);
-  const missingAssignments = courseAssignments.filter(
-    (assignment) => new Date(assignment.dueDate).getTime() <= asOf.getTime()
-      && !relevantSubmissions.some((submission) => submission.assignmentId === assignment.id),
-  );
-  const gradedAssignments = courseAssignments.flatMap((assignment) => {
-    const submission = relevantSubmissions.find((item) => item.assignmentId === assignment.id);
-    if (submission?.score == null) return [];
-    return [{
-      assignment,
-      percentage: assignment.pointsPossible === 0 ? 100 : submission.score / assignment.pointsPossible,
-    }];
-  });
-  const weakestAssignment = missingAssignments[0]
-    ?? gradedAssignments.sort((a, b) => a.percentage - b.percentage)[0]?.assignment
-    ?? courseAssignments[0];
-
-  return {
-    course,
-    percentage: grade.percentage,
-    band: getPerformanceBand(grade.percentage),
-    weakestTopic: weakestAssignment == null ? 'foundations' : inferTopic(weakestAssignment),
-    hasMissingWork: grade.missingAssignments > 0,
-  };
-}
-
-function scoreResource(resource: LearningResource, performance: CoursePerformance) {
-  let score = resource.courseIds.includes(performance.course.id) ? 8 : 2;
-  score += 8;
-  if (resource.topics.includes(performance.weakestTopic)) score += 5;
-  if (performance.band === 'struggling' && resource.topics.includes('study-skills')) score += 4;
-  if (performance.hasMissingWork && resource.id === 'study-plan-reset') score += 5;
-  return score;
-}
-
-function isDifficultyMatch(difficulty: ResourceDifficulty, band: PerformanceBand) {
-  const preferredDifficulties: Record<PerformanceBand, ResourceDifficulty[]> = {
-    struggling: ['remedial', 'core'],
-    developing: ['core'],
-    thriving: ['advanced', 'enrichment'],
-  };
-  return preferredDifficulties[band].includes(difficulty);
-}
-
-function toRecommendation(
-  resource: LearningResource,
-  performance: CoursePerformance,
-): StudentRecommendation {
-  const courseCode = resource.courseIds.includes('*') ? 'All courses' : performance.course.code;
-  const reason = performance.band === 'struggling'
-    ? `Build confidence in ${formatTopic(performance.weakestTopic)} for ${performance.course.code}.`
-    : performance.band === 'thriving'
-      ? `Extend your strong performance in ${performance.course.code}.`
-      : `Target your weakest area in ${performance.course.code}: ${formatTopic(performance.weakestTopic)}.`;
-  return { ...resource, courseCode, reason };
-}
-
-function inferTopic(assignment: Assignment) {
-  const text = `${assignment.title} ${assignment.description}`.toLowerCase();
-  const topicKeywords = [
-    ['foundations', ['foundation', 'checkpoint', 'fundamental']],
-    ['practice', ['practice', 'exercise', 'drill']],
-    ['project', ['project', 'prototype', 'build']],
-    ['analysis', ['analysis', 'analyze', 'reflection', 'evaluate']],
-    ['application', ['applied', 'application', 'challenge']],
-    ['synthesis', ['synthesis', 'final', 'integrate']],
-  ] as const;
-  return topicKeywords.find(([, keywords]) => keywords.some((keyword) => text.includes(keyword)))?.[0]
-    ?? 'foundations';
-}
-
-function formatTopic(topic: string) {
-  return topic.replace(/-/g, ' ');
-}
-
-function getAverageSubmissionGap(submissions: Submission[]) {
-  if (submissions.length < 2) return null;
-  const gaps = submissions.slice(1).map((submission, index) => (
-    new Date(submission.submittedAt).getTime() - new Date(submissions[index].submittedAt).getTime()
-  ) / DAY_IN_MS);
-  return gaps.reduce((total, gap) => total + gap, 0) / gaps.length;
 }

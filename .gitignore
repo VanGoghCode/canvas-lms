@@ -4,9 +4,11 @@ dist
 *.tsbuildinfo
 .DS_Store
 
-# Python virtualenv
+# Python and generated reports
 .venv/
+__pycache__/
+reports/
 
-# generated from vite.config.ts
-vite.config.js
-vite.config.d.ts
+# Browser test artifacts
+playwright-report/
+test-results/

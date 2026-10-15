@@ -1,110 +1,263 @@
-import { Link, Navigate } from 'react-router-dom';
-import { getCourseAssignments, getCourseEnrollments, getStudentById } from '../lib/data';
-import { AT_RISK_GRADE_THRESHOLD, identifyStudentsAtRisk } from '../lib/grading';
-import { useLms } from '../lib/LmsContext';
+import { Link } from 'react-router-dom';
+import { InfoButton } from '../components/InfoButton';
+import {
+  DeadlineList,
+  GradeDistribution,
+  ProgressRing,
+  ProgressBar,
+} from '../components/WorkspaceVisuals';
+import { buildCourseAnalytics } from '../lib/analytics';
+import { byId, courseStudentIds, time } from '../lib/data';
+import { identifyStudentsAtRisk } from '../lib/grading';
+import { useWorkspace } from '../lib/workspace';
 
 export function InstructorPage() {
-  const { session, courses, enrollments, students, assignments, submissions } = useLms();
-  if (!session) return null;
-  if (session.role !== 'instructor') return <Navigate to="/dashboard" replace />;
-
-  const ownedCourses = courses.filter((course) => course.instructorId === session.userId);
-  const atRiskStudents = ownedCourses.flatMap((course) => {
-    const studentIds = getCourseEnrollments(enrollments, course.id).map((enrollment) => enrollment.studentId);
-    return identifyStudentsAtRisk(studentIds, course.id, assignments, submissions);
-  }).sort((left, right) => (left.grade.percentage ?? 0) - (right.grade.percentage ?? 0));
-
+  const { session, students, courses, assignments, submissions, enrollments, grading } =
+    useWorkspace();
+  const user = byId(students, session!.userId);
+  const pending = submissions.filter((s) => s.score == null).length;
+  const roster = new Set(
+    enrollments.filter((e) => courses.some((c) => c.id === e.courseId)).map((e) => e.studentId),
+  );
+  const risk = courses.flatMap((c) =>
+    identifyStudentsAtRisk(courseStudentIds(enrollments, c.id), c.id, assignments, submissions),
+  );
+  const analytics = courses.map((course) => ({
+    course,
+    data: buildCourseAnalytics(
+      course.id,
+      { assignmentId: '', dateFrom: '', dateTo: '' },
+      assignments,
+      submissions,
+      enrollments,
+    ),
+  }));
+  const distribution = ['A', 'B', 'C', 'D', 'F'].map((letter) =>
+    analytics.reduce(
+      (sum, a) => sum + (a.data.gradeDistribution.find((g) => g.grade === letter)?.students ?? 0),
+      0,
+    ),
+  );
+  const queue = [...grading]
+    .sort(
+      (a, b) => b.pending - a.pending || time(a.assignment.dueDate) - time(b.assignment.dueDate),
+    )
+    .slice(0, 6);
   return (
     <div className="page">
-      <header className="page-header">
-        <span className="eyebrow">Instructor workspace</span>
-        <h1>Courses, grading & intervention</h1>
-        <p className="muted">Review submissions, record feedback, and identify students who may need support.</p>
-      </header>
-
-      {ownedCourses.length === 0 ? (
-        <div className="card empty-state">
-          <h2>No assigned courses</h2>
-          <p className="muted">This demo user is not assigned as an instructor. Log in as Ava Patel, Liam Johnson, Maya Chen, or Noah Williams to view a roster.</p>
+      <header className="dashboard-header">
+        <div>
+          <span className="eyebrow">Instructor dashboard</span>
+          <h1>Your classroom, at a glance.</h1>
+          <p className="muted">
+            Welcome back, {user?.preferredName || user?.name.split(' ')[0]}. Make your next action
+            count.
+          </p>
         </div>
-      ) : (
-        <>
-          <section className="intervention-panel" aria-labelledby="intervention-heading">
-            <div className="intervention-heading">
+        <Link className="button primary" to="/instructor/grading?status=pending">
+          Review grading queue →
+        </Link>
+      </header>
+      <div className="kpis">
+        <div>
+          <span>Teaching</span>
+          <strong>{courses.length}</strong>
+          <Link to="/courses">Open courses →</Link>
+        </div>
+        <div>
+          <span>Enrolled students</span>
+          <strong>{roster.size}</strong>
+          <Link to="/instructor/students">View roster →</Link>
+        </div>
+        <div>
+          <span>Needs grading</span>
+          <strong>{pending}</strong>
+          <Link to="/instructor/grading?status=pending">Review responses →</Link>
+        </div>
+        <div>
+          <span>
+            Support check-ins{' '}
+            <InfoButton title="Support check-ins">
+              <p>
+                Course enrollments with a current grade below 70%. A student enrolled in more than
+                one of your courses can have more than one flag. This is a support signal, not an
+                academic sanction.
+              </p>
+            </InfoButton>
+          </span>
+          <strong className={risk.length ? 'warning-text' : ''}>{risk.length}</strong>
+          <Link to="/instructor/students?status=support">See support needs →</Link>
+        </div>
+      </div>
+      <div className="dashboard-columns">
+        <section className="card">
+          <div className="section-heading">
+            <h2>
+              Grading progress{' '}
+              <InfoButton title="Grading progress">
+                <p>
+                  Published grades divided by all received responses in your courses. Unsubmitted
+                  work is not part of this denominator. New submissions automatically update the
+                  queue.
+                </p>
+              </InfoButton>
+            </h2>
+            <span className="pill neutral">{submissions.length} responses</span>
+          </div>
+          <div className="progress-overview">
+            <ProgressRing
+              completed={submissions.length - pending}
+              total={submissions.length}
+              label="graded"
+            />
+            <div className="progress-legend">
               <div>
-                <span className="eyebrow">Early intervention</span>
-                <h2 id="intervention-heading">Students needing support</h2>
+                <i className="dot graded" />
+                <span>Published</span>
+                <strong>{submissions.length - pending}</strong>
               </div>
-              <span className="threshold-label">Below {AT_RISK_GRADE_THRESHOLD}%</span>
+              <div>
+                <i className="dot pending" />
+                <span>Awaiting review</span>
+                <strong>{pending}</strong>
+              </div>
             </div>
-            {atRiskStudents.length === 0 ? (
-              <p className="intervention-empty">No students are currently below the intervention threshold.</p>
-            ) : (
-              <div className="risk-list">
-                {atRiskStudents.map((risk) => {
-                  const student = getStudentById(students, risk.studentId);
-                  const course = courses.find((item) => item.id === risk.courseId);
-                  return (
-                    <article className="risk-item" key={`${risk.courseId}-${risk.studentId}`}>
-                      <div className="risk-student">
-                        <div>
-                          <strong>{student?.name ?? 'Unknown student'}</strong>
-                          <span>{course?.code}</span>
-                        </div>
-                        <span className="risk-grade">{risk.grade.letterGrade} · {risk.grade.percentage}%</span>
-                      </div>
-                      <p>{risk.explanation}</p>
-                      <p className="suggested-action"><strong>Suggested action:</strong> {risk.suggestedAction}</p>
-                    </article>
-                  );
-                })}
+          </div>
+          <div className="next-action">
+            <span className="eyebrow">GRADING FOCUS</span>
+            <h3>
+              {pending ? `${pending} responses are ready for you` : 'You’re up to date on grading'}
+            </h3>
+            <Link className="text-button" to="/instructor/grading">
+              {pending ? 'Open your queue' : 'Review published grades'} →
+            </Link>
+          </div>
+        </section>
+        <section className="card stack">
+          <div className="section-heading">
+            <h2>
+              Current grade distribution{' '}
+              <InfoButton title="Current grade distribution">
+                <p>
+                  Course enrollments grouped by points-based progress grade. Missing overdue work
+                  counts as zero; pending grading is excluded. Enrollments without a current grade
+                  are omitted. A student may appear once per course.
+                </p>
+              </InfoButton>
+            </h2>
+          </div>
+          <GradeDistribution counts={distribution} />
+          <div className="section-heading">
+            <small className="muted">
+              {distribution.reduce((a, b) => a + b, 0)} enrollments with a grade
+            </small>
+            <Link to="/instructor/analytics">Full analytics →</Link>
+          </div>
+        </section>
+      </div>
+      <section>
+        <div className="section-heading">
+          <h2>
+            Course health{' '}
+            <InfoButton title="Course health">
+              <p>
+                Average grade is the mean of available student progress grades. Due-work completion
+                measures received work for assignments whose deadlines have passed. These are
+                separate measures; a high submission rate does not guarantee high scores.
+              </p>
+            </InfoButton>
+          </h2>
+          <Link to="/courses">Manage coursework →</Link>
+        </div>
+        <div className="grid course-health-grid">
+          {analytics.map(({ course, data }) => (
+            <article className="card stack" key={course.id}>
+              <span className="eyebrow">
+                {course.code} · {courseStudentIds(enrollments, course.id).length} students
+              </span>
+              <h3>
+                <Link to={`/courses/${course.id}`}>{course.title}</Link>
+              </h3>
+              <div className="course-health-metrics">
+                <div>
+                  <strong>{data.overallAverage == null ? '—' : `${data.overallAverage}%`}</strong>
+                  <small>Average progress grade</small>
+                </div>
+                <div>
+                  <strong>
+                    {data.overallCompletion == null ? '—' : `${data.overallCompletion}%`}
+                  </strong>
+                  <small>Due-work completion</small>
+                </div>
               </div>
-            )}
-          </section>
-
-          {ownedCourses.map((course) => {
-            const roster = getCourseEnrollments(enrollments, course.id)
-              .map((enrollment) => getStudentById(students, enrollment.studentId))
-              .filter(Boolean);
-            const courseAssignments = getCourseAssignments(assignments, course.id);
-
-            return (
-              <section className="card instructor-course" key={course.id}>
-                <div className="section-heading">
-                  <div><span className="eyebrow">{course.code}</span><h2><Link to={`/courses/${course.id}`}>{course.title}</Link></h2></div>
-                  <span>{roster.length} students</span>
-                </div>
-
-                <div>
-                  <h3 className="subsection-title">Assignment grading</h3>
-                  <div className="instructor-assignment-list">
-                    {courseAssignments.map((assignment) => {
-                      const assignmentSubmissions = submissions.filter((submission) => submission.assignmentId === assignment.id);
-                      const graded = assignmentSubmissions.filter((submission) => submission.score != null).length;
-                      return (
-                        <Link className="instructor-assignment-row" to={`/instructor/grade/${assignment.id}`} key={assignment.id}>
-                          <div><strong>{assignment.title}</strong><span>{graded}/{assignmentSubmissions.length} graded</span></div>
-                          <span>Grade submissions →</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="subsection-title">Course roster</h3>
-                  <div className="table-wrap">
-                    <table>
-                      <thead><tr><th>Student</th><th>Email</th></tr></thead>
-                      <tbody>{roster.map((student) => student && <tr key={student.id}><td>{student.name}</td><td>{student.email}</td></tr>)}</tbody>
-                    </table>
-                  </div>
-                </div>
-              </section>
-            );
-          })}
-        </>
-      )}
+              <ProgressBar
+                value={data.overallCompletion ?? 0}
+                total={100}
+                label={`${course.code} due-work completion percent`}
+              />
+              <Link className="text-button" to={`/instructor/students?course=${course.id}`}>
+                Open course roster →
+              </Link>
+            </article>
+          ))}
+        </div>
+        {!courses.length && (
+          <p className="card muted">No courses are assigned to this instructor.</p>
+        )}
+      </section>
+      <div className="dashboard-columns">
+        <section className="card">
+          <div className="section-heading">
+            <h2>Assignment grading</h2>
+            <Link to="/instructor/grading">All assignments →</Link>
+          </div>
+          <div className="dashboard-queue">
+            {queue.map((g) => (
+              <Link
+                key={g.assignment.id}
+                to={`/instructor/grade/${g.assignment.id}`}
+                aria-label={`Grade submissions for ${g.assignment.title}`}
+              >
+                <span>
+                  <strong>{g.assignment.title}</strong>
+                  <small>
+                    {g.course.code} · {g.received}/{g.enrolled} received
+                  </small>
+                </span>
+                <span className={`pill ${g.pending ? 'warning' : 'neutral'}`}>
+                  {g.pending ? `${g.pending} to grade` : g.received ? 'Graded' : 'No responses'}
+                </span>
+                <span>→</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+        <DeadlineList assignments={assignments} courses={courses} instructor />
+      </div>
+      <section className="card">
+        <div className="section-heading">
+          <h2>
+            Student support{' '}
+            <InfoButton title="Support priorities">
+              <p>
+                Review missing assignments and instructor feedback before deciding on support. Use
+                your institution’s communication channels to follow up with students.
+              </p>
+            </InfoButton>
+          </h2>
+          <Link to="/instructor/students?status=support">View check-ins →</Link>
+        </div>
+        <div className="support-summary">
+          <div>
+            <strong>{risk.filter((r) => r.grade.missingAssignments > 0).length}</strong>
+            <span>Flagged enrollments with missing work</span>
+          </div>
+          <div>
+            <strong>{risk.filter((r) => r.grade.missingAssignments === 0).length}</strong>
+            <span>Flagged enrollments with all due work submitted</span>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
