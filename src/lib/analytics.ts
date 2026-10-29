@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Assignment, Enrollment, Submission } from '../types';
+import seedStudents from '../data/students.json';
 import { ACADEMIC_DATE } from './data';
 
 export interface AnalyticsFilters {
@@ -18,6 +19,9 @@ export interface CourseAnalytics {
   assignmentMetrics: { assignmentId: string; assignment: string; completionRate: number; averageScore: number | null }[];
   engagementTimeline: { date: string; submissions: number; activeStudents: number }[];
   cohorts: { cohort: string; students: number; completionRate: number; averageScore: number | null }[];
+  demographicGroups: { category: string; group: string; supportRate: number }[];
+  history: { courses: number; flagged: number; passing: number; below70: number; flaggedPassing: number; unflaggedBelow70: number };
+  outcomes: { students: number; completed: number; employed: number; groups: { group: string; flaggedCompleted: number | null; unflaggedNotCompleted: number | null }[]; records: { id: string; name: string; race: string; flagged: boolean; completion: string; followUp: string; followUpDate: string }[] };
 }
 
 /** Request only the courses shown by the instructor workspace, without response text or feedback. */
@@ -32,10 +36,22 @@ export function useCourseAnalytics(
     const ids = new Set(courseAssignments.map((a) => a.id));
     const courseEnrollments = enrollments.filter((e) => e.courseId === courseId);
     const students = new Set(courseEnrollments.map((e) => e.studentId));
+    const attempts = seedStudents.filter((s) => students.has(s.id)).flatMap((student) =>
+      (student.attempts ?? []).filter((attempt) => ids.has(attempt.assignmentId) &&
+        submissions.some((s) => s.studentId === student.id && s.assignmentId === attempt.assignmentId))
+        .map((attempt) => ({ ...attempt, studentId: student.id })),
+    );
     return {
       courseId, filters, assignments: courseAssignments, enrollments: courseEnrollments,
-      submissions: submissions.filter((s) => ids.has(s.assignmentId) && students.has(s.studentId))
-        .map((s) => ({ studentId: s.studentId, assignmentId: s.assignmentId, submittedAt: s.submittedAt, score: s.score })),
+      demographics: seedStudents.filter((s) => students.has(s.id)).map((s) => ({
+        id: s.id, genderIdentity: s.genderIdentity, ethnicity: s.ethnicity, race: s.races[0] ?? '',
+        history: s.history,
+      })),
+      alumni: seedStudents.filter((s) => s.alumni && s.courseIds?.includes(courseId) && s.outcome && Date.parse(s.outcome.followUpDate) <= Date.now()).map((s) => ({
+        id: s.id, name: s.name, race: s.races[0] ?? '', history: s.history, outcome: s.outcome,
+      })),
+      submissions: [...attempts, ...submissions.filter((s) => ids.has(s.assignmentId) && students.has(s.studentId))
+        .map((s) => ({ studentId: s.studentId, assignmentId: s.assignmentId, submittedAt: s.submittedAt, score: s.score }))],
       asOf: ACADEMIC_DATE.toISOString(),
     };
   });

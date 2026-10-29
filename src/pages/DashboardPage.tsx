@@ -36,7 +36,7 @@ export function DashboardPage() {
       <div className="kpis">
         <div>
           <span>Active courses</span>
-          <strong>{courses.length.toString().padStart(2, '0')}</strong>
+          <strong>{courses.length}</strong>
           <Link to="/courses">Explore coursework →</Link>
         </div>
         <div>
@@ -50,18 +50,18 @@ export function DashboardPage() {
             </InfoButton>
           </span>
           <strong className={missing.length ? 'warning-text' : ''}>
-            {missing.length.toString().padStart(2, '0')}
+            {missing.length}
           </strong>
           <Link to="/work?status=missing">Review missing work →</Link>
         </div>
         <div>
           <span>Awaiting feedback</span>
-          <strong>{pending.length.toString().padStart(2, '0')}</strong>
+          <strong>{pending.length}</strong>
           <Link to="/work?status=pending">View submissions →</Link>
         </div>
         <div>
           <span>Graded assignments</span>
-          <strong>{graded.length.toString().padStart(2, '0')}</strong>
+          <strong>{graded.length}</strong>
           <Link to="/grades">Open gradebook →</Link>
         </div>
       </div>

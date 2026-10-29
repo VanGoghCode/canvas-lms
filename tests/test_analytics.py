@@ -48,6 +48,39 @@ class AnalyticsTests(unittest.TestCase):
         self.assertEqual(result['overallAverage'], 70)
         self.assertEqual(next(g['students'] for g in result['gradeDistribution'] if g['grade'] == 'D'), 1)
 
+    def test_analytics_accepts_bundled_demographics(self):
+        self.data['demographics'] = [{'id': 'new', 'genderIdentity': 'nonbinary',
+                                      'ethnicity': 'not-hispanic-or-latino', 'race': 'asian'}]
+        groups = course_analytics(self.data)['demographicGroups']
+        self.assertEqual({g['category'] for g in groups}, {'genderIdentity', 'ethnicity', 'race'})
+        self.assertTrue(all(g['supportRate'] == 0 for g in groups))
+
+    def test_history_compares_earlier_flags_with_final_course_scores(self):
+        self.data['demographics'] = [{'id': 'new', 'history': [
+            {'year': 2023, 'supportFlag': True, 'finalScore': 80},
+            {'year': 2024, 'supportFlag': False, 'finalScore': 60},
+            {'year': 2025, 'supportFlag': True, 'finalScore': 65},
+        ]}]
+        self.assertEqual(course_analytics(self.data)['history'], {
+            'courses': 3, 'flagged': 2, 'passing': 1, 'below70': 2,
+            'flaggedPassing': 1, 'unflaggedBelow70': 1,
+        })
+
+    def test_earlier_cohort_outcomes_are_available_in_analytics(self):
+        self.data['alumni'] = [
+            {'id': 'al1', 'name': 'Alex Rivers', 'race': 'asian',
+             'history': [{'year': 2022, 'supportFlag': True, 'finalScore': 62}],
+             'outcome': {'year': 2025, 'completion': 'Graduated',
+                         'followUpDate': '2026-06-01', 'followUp': 'Employed'}},
+            {'id': 'al2', 'name': 'Blair Woods', 'race': 'white',
+             'history': [{'year': 2022, 'supportFlag': False, 'finalScore': 80}],
+             'outcome': {'year': 2025, 'completion': 'Not completed',
+                         'followUpDate': '2026-06-01', 'followUp': 'Seeking work'}},
+        ]
+        outcomes = course_analytics(self.data)['outcomes']
+        self.assertEqual((outcomes['students'], outcomes['completed'], outcomes['employed']), (2, 1, 1))
+        self.assertEqual({record['id'] for record in outcomes['records']}, {'al1', 'al2'})
+
 
 if __name__ == '__main__':
     unittest.main()

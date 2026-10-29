@@ -2,6 +2,7 @@ import assignments from '../data/assignments.json';
 import courses from '../data/courses.json';
 import initialEnrollments from '../data/enrollments.json';
 import initialStudents from '../data/students.json';
+import initialInstructors from '../data/instructors.json';
 import initialSubmissions from '../data/submissions.json';
 import type { Enrollment, Session, Student, StudentProfile, Submission } from '../types';
 import {
@@ -34,7 +35,10 @@ export function createInitialState(): WorkspaceState {
     session: null,
     drafts: {},
     enrollments,
-    students: initialStudents.map((s) => ({ ...emptyStudentProfile, ...s })),
+    students: [
+      ...initialInstructors.map((s) => ({ ...emptyStudentProfile, ...s })),
+      ...initialStudents.filter((s) => !s.alumni).map(({ history: _history, attempts: _attempts, ...s }) => ({ ...emptyStudentProfile, ...s })),
+    ],
     submissions: initialSubmissions
       .filter(
         (s) =>
@@ -221,7 +225,7 @@ export function parseSavedState(raw: string): WorkspaceState {
     assert(!Object.keys(validateStudentProfile(s)).length);
   }
   assert(new Set(state.students.map((s) => s.email.toLowerCase())).size === state.students.length);
-  assert(initialStudents.every((s) => state.students.some((saved) => saved.id === s.id)));
+  assert([...initialInstructors, ...initialStudents.filter((s) => !s.alumni)].every((s) => state.students.some((saved) => saved.id === s.id)));
   const learnerIds = new Set(usersForRole(state.students, courses, 'student').map((s) => s.id));
   assert(
     new Set(state.enrollments.map((e) => `${e.studentId}:${e.courseId}`)).size ===

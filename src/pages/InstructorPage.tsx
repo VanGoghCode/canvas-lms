@@ -43,10 +43,9 @@ export function InstructorPage() {
       <header className="dashboard-header">
         <div>
           <span className="eyebrow">Instructor dashboard</span>
-          <h1>Your classroom, at a glance.</h1>
+          <h1>Instructor dashboard</h1>
           <p className="muted">
-            Welcome back, {user?.preferredName || user?.name.split(' ')[0]}. Make your next action
-            count.
+            Welcome back, {user?.preferredName || user?.name.split(' ')[0]}.
           </p>
         </div>
         <Link className="button primary" to="/instructor/grading?status=pending">

@@ -27,6 +27,7 @@ function load() {
 function useLmsState() {
   const [initial] = useState(load);
   const [state, setState] = useState(initial.state);
+  const supportSubmissions = useRef(initial.state.submissions).current;
   const [signedOutManually, setSignedOutManually] = useState(false);
   const current = useRef(state);
   const [storageWarning, setStorageWarning] = useState(initial.warning);
@@ -65,6 +66,7 @@ function useLmsState() {
   };
   return {
     ...state,
+    supportSubmissions,
     courses,
     assignments,
     storageWarning,

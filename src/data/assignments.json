@@ -28,7 +28,7 @@
     "courseId": "c101",
     "title": "Analysis & Reflection",
     "description": "Compare breadth-first and depth-first traversal on a small graph. Show the visit order, explain your choice of data structure, and discuss when each traversal is useful.",
-    "dueDate": "2026-08-09T23:59",
+    "dueDate": "2026-08-15T23:59",
     "pointsPossible": 50
   },
   {

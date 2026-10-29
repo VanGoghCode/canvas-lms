@@ -5,6 +5,7 @@ import { byId, formatDate, time } from '../lib/data';
 import { useLms } from '../lib/LmsContext';
 import { MAX_RESPONSE_LENGTH } from '../lib/store';
 import type { Assignment, Submission } from '../types';
+import seedStudents from '../data/students.json';
 
 /** All submissions for one assignment, each with its own grade form. */
 export function GradeAssignmentPage() {
@@ -145,6 +146,9 @@ interface GradeFormProps {
 }
 
 function GradeForm({ assignment, submission, studentName, onSave }: GradeFormProps) {
+  const earlierAttempts = byId(seedStudents, submission.studentId)?.attempts?.filter(
+    (attempt) => attempt.assignmentId === assignment.id,
+  ) ?? [];
   const [score, setScore] = useState(submission.score?.toString() ?? '');
   const [comment, setComment] = useState(submission.comment);
   const [saved, setSaved] = useState(false);
@@ -181,6 +185,16 @@ function GradeForm({ assignment, submission, studentName, onSave }: GradeFormPro
         <strong>Submitted text</strong>
         <p>{submission.content}</p>
       </div>
+      {earlierAttempts.length > 0 && (
+        <details>
+          <summary>Earlier submissions · {earlierAttempts.length}</summary>
+          {earlierAttempts.map((attempt) => (
+            <p key={attempt.submittedAt} className="muted">
+              {formatDate(attempt.submittedAt)} UTC · {attempt.score} / {assignment.pointsPossible} points
+            </p>
+          ))}
+        </details>
+      )}
 
       <form className="stack" onSubmit={handleSubmit}>
         <label>

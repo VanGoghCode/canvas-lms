@@ -44,6 +44,7 @@ export function CourseDetailPage() {
         <h1>{course.title}</h1>
 
         <p className="muted">Instructor: {byId(students, course.instructorId)?.name}</p>
+        <p className="muted">{course.description}</p>
         <div className="resource-links">
           <span>
             Course overview{' '}

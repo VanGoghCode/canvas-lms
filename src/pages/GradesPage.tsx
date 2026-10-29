@@ -1,6 +1,8 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import { InfoButton } from '../components/InfoButton';
 import { ProgressBar } from '../components/WorkspaceVisuals';
+import { AcademicHistory } from '../components/AcademicHistory';
+import seedStudents from '../data/students.json';
 import { calculateCurrentCourseGrade } from '../lib/grading';
 import { stageLabel, stageTone, useWorkspace } from '../lib/workspace';
 
@@ -42,6 +44,15 @@ export function GradesPage() {
           </select>
         </label>
       </header>
+      {seedStudents.some((student) => student.id === session!.userId) && (
+        <section className="card">
+          <div className="section-heading">
+            <h2>Previous years</h2>
+            <span className="pill neutral">Year 4 · current term</span>
+          </div>
+          <AcademicHistory studentId={session!.userId} />
+        </section>
+      )}
       {!courses.length && (
         <div className="card empty-state">
           <h2>Your gradebook is ready when you are</h2>

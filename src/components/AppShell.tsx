@@ -10,7 +10,25 @@ export function AppShell() {
   const navigate = useNavigate();
   const mainRef = useRef<HTMLElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const menuRef = useRef<HTMLButtonElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
   const [resetOpen, setResetOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(() => !window.matchMedia('(max-width: 760px)').matches);
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 760px)');
+    const onResize = () => setSidebarOpen(!media.matches);
+    media.addEventListener('change', onResize);
+    return () => media.removeEventListener('change', onResize);
+  }, []);
+  useEffect(() => {
+    if (sidebarOpen && window.matchMedia('(max-width: 760px)').matches) {
+      sidebarRef.current?.querySelector<HTMLAnchorElement>('a[aria-current="page"], nav a')?.focus();
+    }
+  }, [sidebarOpen]);
+  const closeMenu = () => {
+    setSidebarOpen(false);
+    menuRef.current?.focus();
+  };
   useEffect(() => {
     mainRef.current?.focus({ preventScroll: true });
     const anchor = hash ? document.getElementById(hash.slice(1)) : null;
@@ -42,30 +60,47 @@ export function AppShell() {
           ['/profile', 'My profile', 'user'],
         ];
   return (
-    <div className="shell">
+    <div className={`shell ${sidebarOpen ? '' : 'sidebar-closed'}`}>
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <aside className="sidebar">
-        <div className="brand">
-          <span className="brand-mark">
-            <Icon name="book" />
-          </span>
-          Canvas <span className="brand-lite">Learning</span>
+      <aside ref={sidebarRef} className="sidebar" id="workspace-sidebar"
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') closeMenu();
+        }}>
+        <div className="sidebar-heading">
+          <button
+            className="sidebar-toggle"
+            ref={menuRef}
+            type="button"
+            aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            aria-controls="workspace-sidebar"
+            aria-expanded={sidebarOpen}
+            onClick={() => setSidebarOpen((open) => !open)}
+          >
+            <span className="toggle-logo"><Icon name="book" /></span>
+            <span className="toggle-menu"><Icon name="menu" /></span>
+          </button>
+          <div className="brand">
+            <span className="brand-name">Canvas <span className="brand-lite">Learning</span></span>
+          </div>
         </div>
         <div className="nav-caption">WORKSPACE</div>
         <nav aria-label="Main navigation">
           {links.map(([to, label, icon]) => (
-            <NavLink key={to} to={to} end={to === '/instructor'}>
+            <NavLink key={to} to={to} aria-label={label} title={!sidebarOpen ? label : undefined} end={to === '/instructor'} onClick={() => {
+              if (window.matchMedia('(max-width: 760px)').matches) setSidebarOpen(false);
+            }}>
               <Icon name={icon} />
-              {label}
+              <span className="nav-label">{label}</span>
             </NavLink>
           ))}
         </nav>
         <div className="sidebar-bottom">
           <div className="workspace-info">
             <span className="live-dot" />
-            Learning workspace<p>Courses, coursework, and feedback.</p>
+            Saved in this browser<p>Your coursework stays on this device.</p>
             <button className="text-button" onClick={() => setResetOpen(true)}>
               Restore workspace data
             </button>
@@ -85,24 +120,28 @@ export function AppShell() {
           </div>
           <button
             className="button switch-button"
+            aria-label="Switch account"
+            title={!sidebarOpen ? 'Switch account' : undefined}
             onClick={() => {
               logout();
               navigate('/login', { replace: true, state: null });
             }}
           >
-            Switch account / Log out
+            <Icon name="user" /><span className="nav-label">Switch account</span>
+          </button>
+          <button className="text-button reset-mobile" onClick={() => setResetOpen(true)}>
+            Restore workspace data
           </button>
         </div>
       </aside>
       <div className="workspace">
         <div className="topbar">
-          <span>
-            Learning workspace <span className="topbar-divider">/</span>{' '}
-            <strong>{session?.role === 'student' ? 'Student' : 'Instructor'}</strong>
-          </span>
-          <button className="text-button reset-mobile" onClick={() => setResetOpen(true)}>
-            Restore workspace data
-          </button>
+          <div className="topbar-start">
+            <span className="topbar-context">
+              {session?.role === 'student' ? 'Student workspace' : 'Instructor workspace'} <span className="topbar-divider">/</span>{' '}
+              <strong>{[...links].sort((a, b) => b[0].length - a[0].length).find(([to]) => pathname === to || pathname.startsWith(`${to}/`))?.[1] ?? 'Coursework'}</strong>
+            </span>
+          </div>
           <span className="snapshot">Academic date · Aug 15, 2026 · UTC</span>
         </div>
         {storageWarning && (

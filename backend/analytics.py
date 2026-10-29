@@ -62,7 +62,7 @@ def course_analytics(data):
         letter = None if grade is None else ('A' if grade >= 90 else 'B' if grade >= 80 else 'C' if grade >= 70 else 'D' if grade >= 60 else 'F')
         completion = completed / len(due) * 100 if due else 0
         cohort = COHORTS[0 if completion >= 80 else 1 if completion >= 50 else 2] if due else ''
-        students.append({'completed': completed, 'scores': scores(items), 'grade': grade,
+        students.append({'id': student_id, 'completed': completed, 'scores': scores(items), 'grade': grade,
                          'letter': letter, 'cohort': cohort})
     grades = [s['grade'] for s in students if s['grade'] is not None]
     days = sorted({instant(s['submittedAt']).date().isoformat() for s in submissions})
@@ -85,6 +85,31 @@ def course_analytics(data):
             cohorts.append({'cohort': cohort, 'students': len(members),
                             'completionRate': percent(sum(m['completed'] for m in members), len(members) * len(due)),
                             'averageScore': average([score for m in members for score in m['scores']])})
+    profiles = {profile['id']: profile for profile in data.get('demographics', [])}
+    history = [item for student_id in student_ids for item in profiles.get(student_id, {}).get('history', [])]
+    groups = []
+    for field in ('genderIdentity', 'ethnicity', 'race'):
+        values = {profile.get(field, '') for profile in profiles.values()} - {'', 'prefer-not-to-answer'}
+        for value in sorted(values):
+            members = [student for student in students
+                       if profiles.get(student['id'], {}).get(field) == value]
+            if members:
+                flagged = sum((student['grade'] is not None and student['grade'] < 70)
+                              or (bool(due) and student['completed'] / len(due) < .8)
+                              for student in members)
+                groups.append({'category': field, 'group': value, 'supportRate': percent(flagged, len(members))})
+    alumni = [person for person in data.get('alumni', []) if person.get('outcome') and person.get('history')]
+    alumni_profiles = {person['name'].split()[0]: person for person in alumni}
+    outcome_groups = []
+    for group in sorted({person.get('race', '') for person in alumni} - {''}):
+        members = [person for person in alumni if alumni_profiles[person['name'].split()[0]].get('race') == group]
+        flagged = [person for person in members if person['history'][0]['supportFlag']]
+        not_flagged = [person for person in members if not person['history'][0]['supportFlag']]
+        outcome_groups.append({
+            'group': group,
+            'flaggedCompleted': percent(sum(person['outcome']['completion'] == 'Graduated' for person in flagged), len(flagged)) if flagged else None,
+            'unflaggedNotCompleted': percent(sum(person['outcome']['completion'] != 'Graduated' for person in not_flagged), len(not_flagged)) if not_flagged else None,
+        })
     return {
         'overallAverage': average(grades),
         'overallCompletion': percent(sum(s['assignmentId'] in due_ids for s in submissions), len(student_ids) * len(due)) if due and student_ids else None,
@@ -93,4 +118,16 @@ def course_analytics(data):
         'lateAverage': average(scores([s for s in submissions if is_late(s)])),
         'gradeDistribution': [{'grade': letter, 'students': sum(s['letter'] == letter for s in students)} for letter in LETTERS],
         'assignmentMetrics': metrics, 'engagementTimeline': timeline, 'cohorts': cohorts,
+        'demographicGroups': groups,
+        'outcomes': {'students': len(alumni),
+                     'completed': sum(person['outcome']['completion'] == 'Graduated' for person in alumni),
+                     'employed': sum(person['outcome']['followUp'] == 'Employed' for person in alumni),
+                     'groups': outcome_groups,
+                     'records': [{'id': person['id'], 'name': person['name'], 'race': person.get('race', ''),
+                                  'flagged': person['history'][0]['supportFlag'], **person['outcome']} for person in alumni]},
+        'history': {'courses': len(history), 'flagged': sum(item['supportFlag'] for item in history),
+                    'passing': sum(item['finalScore'] >= 70 for item in history),
+                    'below70': sum(item['finalScore'] < 70 for item in history),
+                    'flaggedPassing': sum(item['supportFlag'] and item['finalScore'] >= 70 for item in history),
+                    'unflaggedBelow70': sum(not item['supportFlag'] and item['finalScore'] < 70 for item in history)},
     }

@@ -1,15 +1,16 @@
 import { InfoButton } from '../components/InfoButton';
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { MetricChart } from '../components/MetricChart';
 import { useCourseAnalytics, type CourseAnalytics } from '../lib/analytics';
 import { useLms } from '../lib/LmsContext';
+import { supportAssessment } from '../lib/support';
 
 const noFilters = { assignmentId: '', dateFrom: '', dateTo: '' };
 
 /** Filters → one analytics object → insights, KPIs, charts, and cohort table. */
 export function InstructorAnalyticsPage() {
-  const { session, courses, assignments, submissions, enrollments } = useLms();
+  const { session, courses, assignments, submissions, supportSubmissions, enrollments } = useLms();
   const myCourses = courses.filter((c) => c.instructorId === session!.userId);
   const [courseId, setCourseId] = useState(myCourses[0]?.id ?? '');
   const [filters, setFilters] = useState(noFilters);
@@ -21,6 +22,10 @@ export function InstructorAnalyticsPage() {
     course ? [{ courseId: course.id, filters }] : [], assignments, submissions, enrollments,
   );
   if (!course) return <Navigate to="/instructor" replace />;
+  const courseEnrollments = enrollments.filter((e) => e.courseId === course.id);
+  const atRisk = courseEnrollments.filter((e) =>
+    supportAssessment(e.studentId, course.id, assignments, supportSubmissions).needsSupport,
+  ).length;
   const invalidRange = Boolean(
     filters.dateFrom && filters.dateTo && filters.dateFrom > filters.dateTo,
   );
@@ -39,7 +44,7 @@ export function InstructorAnalyticsPage() {
         <span className="eyebrow">Instructor analytics</span>
         <h1>Course performance</h1>
         <p className="muted">
-          Evidence for your next teaching decision.{' '}
+          {course.code} · {course.title} · as of Aug 15, 2026 (UTC).{' '}
           <InfoButton title="Course analytics">
             <p>
               Grade, completion, and submission patterns for {course.title}. Date filters select
@@ -109,6 +114,23 @@ export function InstructorAnalyticsPage() {
         </button>
       </section>
 
+      <div className="risk-overview">
+        <MetricChart
+          title="At-risk students"
+          description="Students flagged for a check-in in this course. Assignment and date filters do not apply."
+          series={['Students']}
+          rows={[
+            { label: 'At risk', values: [atRisk] },
+            { label: 'Not flagged', values: [courseEnrollments.length - atRisk] },
+          ]}
+          unit=""
+          max={Math.max(1, courseEnrollments.length)}
+        />
+        <Link className="button" to={`/instructor/students?course=${encodeURIComponent(course.id)}&status=support`}>
+          View at-risk students →
+        </Link>
+      </div>
+
       {invalidRange ? (
         <p className="note" role="alert">
           Choose an end date on or after the start date, or reset the filters.
@@ -125,8 +147,6 @@ export function InstructorAnalyticsPage() {
               course activity.
             </p>
           )}
-          <Insights data={data} />
-
           <div className="kpis">
             <div>
               <span>Average grade</span>
@@ -146,7 +166,68 @@ export function InstructorAnalyticsPage() {
             </div>
           </div>
 
-          <div className="grid">
+          {data.history?.courses > 0 && (
+            <section className="card history-summary">
+              <div className="section-heading">
+                <h2>Previous years: flags and final scores</h2>
+                <span className="pill neutral">2023–2025</span>
+              </div>
+              <p className="muted">Selected past courses for enrolled students with bundled history. A final score below 70% is used for this comparison. Assignment and date filters do not apply.</p>
+              <div className="history-metrics">
+                <div><strong>{data.history.courses}</strong><span>Past course records</span></div>
+                <div><strong>{data.history.flagged}</strong><span>Earlier support flags</span></div>
+                <div><strong>{data.history.flaggedPassing} / {data.history.passing}</strong><span>Flagged among scores 70% or higher</span></div>
+                <div><strong>{data.history.unflaggedBelow70} / {data.history.below70}</strong><span>Not flagged among scores below 70%</span></div>
+              </div>
+            </section>
+          )}
+
+          {data.outcomes?.students > 0 && (
+            <section className="card history-summary">
+              <div className="section-heading">
+                <h2>Earlier cohort outcomes</h2>
+                <span className="pill neutral">2022–2026</span>
+              </div>
+              <p className="muted">Students who started in 2022, with program status in 2025 and a follow-up in 2026. Assignment and date filters do not apply.</p>
+              <div className="history-metrics">
+                <div><strong>{data.outcomes.students}</strong><span>Students followed</span></div>
+                <div><strong>{data.outcomes.completed}</strong><span>Completed by 2025</span></div>
+                <div><strong>{data.outcomes.employed}</strong><span>Employed at follow-up</span></div>
+              </div>
+              <div className="table-wrap">
+                <table className="data-table">
+                  <thead><tr><th scope="col">Group</th><th scope="col">Flagged, then completed</th><th scope="col">Not flagged, then not completed</th></tr></thead>
+                  <tbody>
+                    {data.outcomes.groups.map((group) => (
+                      <tr key={group.group}>
+                        <th scope="row">{group.group.replace(/-/g, ' ')}</th>
+                        <td>{pct(group.flaggedCompleted)}</td>
+                        <td>{pct(group.unflaggedNotCompleted)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <details>
+                <summary>View cohort records</summary>
+                <div className="table-wrap">
+                  <table className="data-table">
+                    <thead><tr><th scope="col">Student</th><th scope="col">Race</th><th scope="col">Earlier flag</th><th scope="col">Program status</th><th scope="col">Follow-up</th></tr></thead>
+                    <tbody>
+                      {data.outcomes.records.map((record) => (
+                        <tr key={record.id}>
+                          <th scope="row">{record.name}</th><td>{record.race.replace(/-/g, ' ')}</td>
+                          <td>{record.flagged ? 'Yes' : 'No'}</td><td>{record.completion}</td><td>{record.followUp} · {record.followUpDate}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            </section>
+          )}
+
+          <div className="grid analytics-grid">
             <MetricChart
               title="Grade distribution"
               description="Students grouped by their points-based grade."
@@ -185,6 +266,31 @@ export function InstructorAnalyticsPage() {
               }))}
             />
           </div>
+
+          <section className="card">
+            <h2>Support by student group</h2>
+            <p className="muted">Share of students suggested for a check-in.</p>
+            {(data.demographicGroups ?? []).length === 0 ? (
+              <p className="muted">No group information is available.</p>
+            ) : (
+              <div className="table-wrap">
+                <table className="data-table">
+                  <thead>
+                    <tr><th scope="col">Category</th><th scope="col">Group</th><th scope="col">Support rate</th></tr>
+                  </thead>
+                  <tbody>
+                    {data.demographicGroups.map((group) => (
+                      <tr key={`${group.category}:${group.group}`}>
+                        <td>{group.category === 'genderIdentity' ? 'Gender identity' : group.category === 'ethnicity' ? 'Ethnicity' : 'Race'}</td>
+                        <td>{group.group.replace(/-/g, ' ')}</td>
+                        <td>{group.supportRate}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
 
           <section className="card">
             <h2>
@@ -246,6 +352,10 @@ export function InstructorAnalyticsPage() {
               </div>
             )}
           </section>
+          <details className="card">
+            <summary>More performance insights</summary>
+            <Insights data={data} />
+          </details>
         </>
       )}
     </div>

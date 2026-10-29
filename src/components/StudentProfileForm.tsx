@@ -196,7 +196,7 @@ export function StudentProfileForm({
           <InfoButton title="Demographic information">
             <p>
               These details do not affect course access, grades, support flags, or recommendations.
-              Instructors do not see these fields in the course roster.
+              Bundled profile details may be visible in the course roster.
             </p>
           </InfoButton>
         </p>

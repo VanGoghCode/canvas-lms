@@ -1,152 +1,350 @@
 [
   {
-    "id": "s01",
-    "name": "Ava Patel",
-    "email": "ava.patel@campus.example"
-  },
-  {
-    "id": "s02",
-    "name": "Liam Johnson",
-    "email": "liam.johnson@campus.example"
-  },
-  {
-    "id": "s03",
-    "name": "Maya Chen",
-    "email": "maya.chen@campus.example"
-  },
-  {
-    "id": "s04",
-    "name": "Noah Williams",
-    "email": "noah.williams@campus.example"
-  },
-  {
     "id": "s05",
     "name": "Emma Garcia",
-    "email": "emma.garcia@campus.example"
+    "email": "emma.garcia@campus.example",
+    "genderIdentity": "",
+    "ethnicity": "",
+    "races": [],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 62, "supportFlag": true},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 79, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 96, "supportFlag": false}
+    ]
   },
   {
     "id": "s06",
     "name": "Ethan Brown",
-    "email": "ethan.brown@campus.example"
+    "email": "ethan.brown@campus.example",
+    "attempts": [{"assignmentId": "a103", "submittedAt": "2026-07-17T14:00:00Z", "score": 72}],
+    "genderIdentity": "nonbinary",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 73, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 90, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 62, "supportFlag": true}
+    ]
   },
   {
     "id": "s07",
     "name": "Sofia Kim",
-    "email": "sofia.kim@campus.example"
+    "email": "sofia.kim@campus.example",
+    "genderIdentity": "woman",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 84, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 56, "supportFlag": true},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 73, "supportFlag": false}
+    ]
   },
   {
     "id": "s08",
     "name": "Lucas Martinez",
-    "email": "lucas.martinez@campus.example"
+    "email": "lucas.martinez@campus.example",
+    "genderIdentity": "man",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["white"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 95, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 67, "supportFlag": true},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 84, "supportFlag": true}
+    ]
   },
   {
     "id": "s09",
     "name": "Zoe Davis",
-    "email": "zoe.davis@campus.example"
+    "email": "zoe.davis@campus.example",
+    "attempts": [{"assignmentId": "a103", "submittedAt": "2026-07-20T14:00:00Z", "score": 45}],
+    "genderIdentity": "woman",
+    "ethnicity": "hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 61, "supportFlag": true},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 78, "supportFlag": true},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 95, "supportFlag": false}
+    ]
   },
   {
     "id": "s10",
     "name": "Mateo Wilson",
-    "email": "mateo.wilson@campus.example"
+    "email": "mateo.wilson@campus.example",
+    "genderIdentity": "man",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["white"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 72, "supportFlag": true},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 89, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 61, "supportFlag": false}
+    ]
   },
   {
     "id": "s11",
     "name": "Isla Singh",
-    "email": "isla.singh@campus.example"
+    "email": "isla.singh@campus.example",
+    "genderIdentity": "woman",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 83, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 55, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 72, "supportFlag": true}
+    ]
   },
   {
     "id": "s12",
     "name": "Oliver Miller",
-    "email": "oliver.miller@campus.example"
+    "email": "oliver.miller@campus.example",
+    "genderIdentity": "man",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["white"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 94, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 66, "supportFlag": true},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 83, "supportFlag": false}
+    ]
   },
   {
     "id": "s13",
     "name": "Nina Nguyen",
-    "email": "nina.nguyen@campus.example"
+    "email": "nina.nguyen@campus.example",
+    "genderIdentity": "woman",
+    "ethnicity": "hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 60, "supportFlag": true},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 77, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 94, "supportFlag": false}
+    ]
   },
   {
     "id": "s14",
     "name": "Elijah Moore",
-    "email": "elijah.moore@campus.example"
+    "email": "elijah.moore@campus.example",
+    "genderIdentity": "man",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["white"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 71, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 88, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 60, "supportFlag": true}
+    ]
   },
   {
     "id": "s15",
     "name": "Mila Anderson",
-    "email": "mila.anderson@campus.example"
+    "email": "mila.anderson@campus.example",
+    "genderIdentity": "woman",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 82, "supportFlag": true},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 54, "supportFlag": true},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 71, "supportFlag": false}
+    ]
   },
   {
     "id": "s16",
     "name": "Henry Thomas",
-    "email": "henry.thomas@campus.example"
+    "email": "henry.thomas@campus.example",
+    "genderIdentity": "man",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["white"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 93, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 65, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 82, "supportFlag": false}
+    ]
   },
   {
     "id": "s17",
     "name": "Chloe Lee",
-    "email": "chloe.lee@campus.example"
+    "email": "chloe.lee@campus.example",
+    "genderIdentity": "woman",
+    "ethnicity": "hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 59, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 76, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 93, "supportFlag": false}
+    ]
   },
   {
     "id": "s18",
     "name": "Leo Jackson",
-    "email": "leo.jackson@campus.example"
+    "email": "leo.jackson@campus.example",
+    "genderIdentity": "man",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["white"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 70, "supportFlag": true},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 87, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 59, "supportFlag": true}
+    ]
   },
   {
     "id": "s19",
     "name": "Anika Shah",
-    "email": "anika.shah@campus.example"
+    "email": "anika.shah@campus.example",
+    "genderIdentity": "woman",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 81, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 53, "supportFlag": true},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 70, "supportFlag": false}
+    ]
   },
   {
     "id": "s20",
     "name": "Jack White",
-    "email": "jack.white@campus.example"
+    "email": "jack.white@campus.example",
+    "genderIdentity": "man",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["white"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 92, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 64, "supportFlag": true},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 81, "supportFlag": false}
+    ]
   },
   {
     "id": "s21",
     "name": "Priya Clark",
-    "email": "priya.clark@campus.example"
+    "email": "priya.clark@campus.example",
+    "genderIdentity": "woman",
+    "ethnicity": "hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 58, "supportFlag": true},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 75, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 92, "supportFlag": false}
+    ]
   },
   {
     "id": "s22",
     "name": "Owen Lewis",
-    "email": "owen.lewis@campus.example"
+    "email": "owen.lewis@campus.example",
+    "genderIdentity": "man",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["asian"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 69, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 86, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 58, "supportFlag": true}
+    ]
   },
   {
     "id": "s23",
     "name": "Layla Walker",
-    "email": "layla.walker@campus.example"
+    "email": "layla.walker@campus.example",
+    "genderIdentity": "woman",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 80, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 52, "supportFlag": true},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 69, "supportFlag": true}
+    ]
   },
   {
     "id": "s24",
     "name": "Ben Hall",
-    "email": "ben.hall@campus.example"
+    "email": "ben.hall@campus.example",
+    "genderIdentity": "man",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["white"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 91, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 63, "supportFlag": true},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 80, "supportFlag": false}
+    ]
   },
   {
     "id": "s25",
     "name": "Ivy Young",
-    "email": "ivy.young@campus.example"
+    "email": "ivy.young@campus.example",
+    "genderIdentity": "woman",
+    "ethnicity": "hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 57, "supportFlag": true},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 74, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 91, "supportFlag": false}
+    ]
   },
   {
     "id": "s26",
     "name": "Sam Allen",
-    "email": "sam.allen@campus.example"
+    "email": "sam.allen@campus.example",
+    "genderIdentity": "man",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["white"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 68, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 85, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 57, "supportFlag": true}
+    ]
   },
   {
     "id": "s27",
     "name": "Aria King",
-    "email": "aria.king@campus.example"
+    "email": "aria.king@campus.example",
+    "genderIdentity": "woman",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 79, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 96, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 68, "supportFlag": true}
+    ]
   },
   {
     "id": "s28",
     "name": "Max Wright",
-    "email": "max.wright@campus.example"
+    "email": "max.wright@campus.example",
+    "genderIdentity": "man",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["white"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 90, "supportFlag": false},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 62, "supportFlag": true},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 79, "supportFlag": true}
+    ]
   },
   {
     "id": "s29",
     "name": "Nora Scott",
-    "email": "nora.scott@campus.example"
+    "email": "nora.scott@campus.example",
+    "genderIdentity": "woman",
+    "ethnicity": "hispanic-or-latino",
+    "races": ["black-or-african-american"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 56, "supportFlag": true},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 73, "supportFlag": true},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 90, "supportFlag": false}
+    ]
   },
   {
     "id": "s30",
     "name": "Kai Green",
-    "email": "kai.green@campus.example"
-  }
+    "email": "kai.green@campus.example",
+    "genderIdentity": "man",
+    "ethnicity": "not-hispanic-or-latino",
+    "races": ["white"],
+    "history": [
+      {"year": 2023, "course": "Foundations of Computing", "finalScore": 67, "supportFlag": true},
+      {"year": 2024, "course": "Programming Principles", "finalScore": 84, "supportFlag": false},
+      {"year": 2025, "course": "Systems and Data", "finalScore": 56, "supportFlag": false}
+    ]
+  },
+  {"id": "al01", "name": "Avery Stone", "email": "al01@campus.example", "genderIdentity": "woman", "ethnicity": "not-hispanic-or-latino", "races": ["asian"], "alumni": true, "courseIds": ["c101", "c102", "c103", "c104"], "history": [{"year": 2022, "course": "Foundations of Computing", "finalScore": 84, "supportFlag": true}, {"year": 2023, "course": "Programming Principles", "finalScore": 78, "supportFlag": false}, {"year": 2024, "course": "Systems and Data", "finalScore": 81, "supportFlag": false}, {"year": 2025, "course": "Applied Computing", "finalScore": 86, "supportFlag": false}], "outcome": {"year": 2025, "completion": "Graduated", "followUpDate": "2026-06-01", "followUp": "Employed"}},
+  {"id": "al02", "name": "Jordan Reed", "email": "al02@campus.example", "genderIdentity": "man", "ethnicity": "not-hispanic-or-latino", "races": ["white"], "alumni": true, "courseIds": ["c101", "c102", "c103", "c104"], "history": [{"year": 2022, "course": "Foundations of Computing", "finalScore": 78, "supportFlag": false}, {"year": 2023, "course": "Programming Principles", "finalScore": 81, "supportFlag": false}, {"year": 2024, "course": "Systems and Data", "finalScore": 84, "supportFlag": false}, {"year": 2025, "course": "Applied Computing", "finalScore": 80, "supportFlag": false}], "outcome": {"year": 2025, "completion": "Graduated", "followUpDate": "2026-06-01", "followUp": "Employed"}},
+  {"id": "al03", "name": "Morgan Bell", "email": "al03@campus.example", "genderIdentity": "nonbinary", "ethnicity": "not-hispanic-or-latino", "races": ["black-or-african-american"], "alumni": true, "courseIds": ["c101", "c102", "c103", "c104"], "history": [{"year": 2022, "course": "Foundations of Computing", "finalScore": 61, "supportFlag": true}, {"year": 2023, "course": "Programming Principles", "finalScore": 72, "supportFlag": false}, {"year": 2024, "course": "Systems and Data", "finalScore": 75, "supportFlag": false}, {"year": 2025, "course": "Applied Computing", "finalScore": 79, "supportFlag": false}], "outcome": {"year": 2025, "completion": "Graduated", "followUpDate": "2026-06-01", "followUp": "Seeking work"}},
+  {"id": "al04", "name": "Taylor Price", "email": "al04@campus.example", "genderIdentity": "woman", "ethnicity": "not-hispanic-or-latino", "races": ["black-or-african-american"], "alumni": true, "courseIds": ["c101", "c102", "c103", "c104"], "history": [{"year": 2022, "course": "Foundations of Computing", "finalScore": 79, "supportFlag": false}, {"year": 2023, "course": "Programming Principles", "finalScore": 74, "supportFlag": false}, {"year": 2024, "course": "Systems and Data", "finalScore": 68, "supportFlag": true}, {"year": 2025, "course": "Applied Computing", "finalScore": 63, "supportFlag": true}], "outcome": {"year": 2025, "completion": "Not completed", "followUpDate": "2026-06-01", "followUp": "Seeking work"}},
+  {"id": "al05", "name": "Riley Ward", "email": "al05@campus.example", "genderIdentity": "man", "ethnicity": "not-hispanic-or-latino", "races": ["white"], "alumni": true, "courseIds": ["c101", "c102", "c103", "c104"], "history": [{"year": 2022, "course": "Foundations of Computing", "finalScore": 65, "supportFlag": true}, {"year": 2023, "course": "Programming Principles", "finalScore": 73, "supportFlag": false}, {"year": 2024, "course": "Systems and Data", "finalScore": 78, "supportFlag": false}, {"year": 2025, "course": "Applied Computing", "finalScore": 82, "supportFlag": false}], "outcome": {"year": 2025, "completion": "Graduated", "followUpDate": "2026-06-01", "followUp": "Continuing study"}},
+  {"id": "al06", "name": "Casey Lane", "email": "al06@campus.example", "genderIdentity": "woman", "ethnicity": "not-hispanic-or-latino", "races": ["asian"], "alumni": true, "courseIds": ["c101", "c102", "c103", "c104"], "history": [{"year": 2022, "course": "Foundations of Computing", "finalScore": 82, "supportFlag": false}, {"year": 2023, "course": "Programming Principles", "finalScore": 85, "supportFlag": false}, {"year": 2024, "course": "Systems and Data", "finalScore": 87, "supportFlag": false}, {"year": 2025, "course": "Applied Computing", "finalScore": 89, "supportFlag": false}], "outcome": {"year": 2025, "completion": "Graduated", "followUpDate": "2026-06-01", "followUp": "Employed"}},
+  {"id": "al07", "name": "Parker Wells", "email": "al07@campus.example", "genderIdentity": "man", "ethnicity": "not-hispanic-or-latino", "races": ["black-or-african-american"], "alumni": true, "courseIds": ["c101", "c102", "c103", "c104"], "history": [{"year": 2022, "course": "Foundations of Computing", "finalScore": 75, "supportFlag": false}, {"year": 2023, "course": "Programming Principles", "finalScore": 71, "supportFlag": false}, {"year": 2024, "course": "Systems and Data", "finalScore": 65, "supportFlag": true}, {"year": 2025, "course": "Applied Computing", "finalScore": 62, "supportFlag": true}], "outcome": {"year": 2025, "completion": "Not completed", "followUpDate": "2026-06-01", "followUp": "Unknown"}},
+  {"id": "al08", "name": "Avery Hayes", "email": "al08@campus.example", "genderIdentity": "nonbinary", "ethnicity": "not-hispanic-or-latino", "races": ["white"], "alumni": true, "courseIds": ["c101", "c102", "c103", "c104"], "history": [{"year": 2022, "course": "Foundations of Computing", "finalScore": 62, "supportFlag": true}, {"year": 2023, "course": "Programming Principles", "finalScore": 71, "supportFlag": false}, {"year": 2024, "course": "Systems and Data", "finalScore": 77, "supportFlag": false}, {"year": 2025, "course": "Applied Computing", "finalScore": 83, "supportFlag": false}], "outcome": {"year": 2025, "completion": "Graduated", "followUpDate": "2026-09-01", "followUp": "Employed"}}
 ]

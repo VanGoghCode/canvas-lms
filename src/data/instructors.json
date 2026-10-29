@@ -1,0 +1,22 @@
+[
+  {
+    "id": "s01",
+    "name": "Ava Patel",
+    "email": "ava.patel@campus.example"
+  },
+  {
+    "id": "s02",
+    "name": "Liam Johnson",
+    "email": "liam.johnson@campus.example"
+  },
+  {
+    "id": "s03",
+    "name": "Maya Chen",
+    "email": "maya.chen@campus.example"
+  },
+  {
+    "id": "s04",
+    "name": "Noah Williams",
+    "email": "noah.williams@campus.example"
+  }
+]

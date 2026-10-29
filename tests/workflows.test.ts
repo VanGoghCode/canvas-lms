@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import assignments from '../src/data/assignments.json';
 import courses from '../src/data/courses.json';
+import seedStudents from '../src/data/students.json';
+import seedInstructors from '../src/data/instructors.json';
 import {
   applyAction,
   createInitialState,
@@ -114,6 +116,41 @@ describe('complete coursework workflow', () => {
 });
 
 describe('validation and access', () => {
+  it('loads separate account tables and retains older browser saves', () => {
+    const state = createInitialState();
+    expect(new Set([...seedStudents, ...seedInstructors].map((user) => user.id)).size)
+      .toBe(seedStudents.length + seedInstructors.length);
+    expect(seedInstructors.map((user) => user.id).sort())
+      .toEqual(courses.map((course) => course.instructorId).sort());
+    const oldSave = {
+      ...state,
+      students: state.students.map((user) => ({
+        ...user, genderIdentity: '', ethnicity: '', races: [],
+      })),
+    };
+    expect(parseSavedState(JSON.stringify(oldSave))).toEqual(oldSave);
+  });
+  it('keeps completed historical courses separate from the current workspace', () => {
+    const state = createInitialState();
+    for (const student of seedStudents.filter((student) => !student.alumni)) {
+      expect(student.history.map((record) => record.year)).toEqual([2023, 2024, 2025]);
+      expect(student.history.every((record) => record.finalScore >= 0 && record.finalScore <= 100)).toBe(true);
+    }
+    expect(state.submissions.every((submission) => assignments.some((a) => a.id === submission.assignmentId))).toBe(true);
+  });
+  it('keeps the earlier cohort out of login accounts and dates previous attempts before current work', () => {
+    const state = createInitialState();
+    const alumni = seedStudents.filter((student) => student.alumni);
+    expect(alumni.length).toBeGreaterThan(0);
+    expect(alumni.every((student) => !state.students.some((account) => account.id === student.id))).toBe(true);
+    for (const student of seedStudents) {
+      for (const attempt of student.attempts ?? []) {
+        const current = state.submissions.find((s) => s.studentId === student.id && s.assignmentId === attempt.assignmentId);
+        expect(current).toBeDefined();
+        expect(time(attempt.submittedAt)).toBeLessThan(time(current!.submittedAt));
+      }
+    }
+  });
   it('excludes instructor enrollments and submissions after the snapshot', () => {
     const state = createInitialState();
     expect(

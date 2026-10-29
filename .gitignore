@@ -5,3 +5,11 @@ dist
 .DS_Store
 __pycache__/
 .venv/
+
+# ccr:start - local context continuity
+.ccr/config.local.json
+.ccr/journal/
+.ccr/private/
+.ccr/cache/
+.ccr/tmp/
+# ccr:end

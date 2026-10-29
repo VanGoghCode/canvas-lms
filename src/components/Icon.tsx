@@ -10,6 +10,7 @@ const paths: Record<string, string> = {
   user: 'M20 21v-2a7 7 0 0 0-14 0v2 M17 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
   arrow: 'M5 12h14 M13 6l6 6-6 6',
   check: 'm5 12 4 4L19 6',
+  menu: 'M3 6h18 M3 12h18 M3 18h18',
 };
 export function Icon({ name, style }: { name: string; style?: CSSProperties }) {
   return (

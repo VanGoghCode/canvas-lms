@@ -1,0 +1,14 @@
+{
+  "domain": "education-technology",
+  "hooks": {
+    "enabled": true,
+    "checkBeforeCommit": true
+  },
+  "context": {
+    "recentJournalEntries": 1
+  },
+  "instructions": {
+    "updateClaudeMd": true,
+    "updateAgentsMd": true
+  }
+}

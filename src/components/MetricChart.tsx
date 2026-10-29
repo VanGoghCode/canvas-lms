@@ -19,14 +19,14 @@ export function MetricChart({ title, description, series, rows, unit = '%', max 
           <p>{description}</p>
         </InfoButton>
       </h2>
-      <div className="legend">
-        {series.map((name, i) => (
-          <span key={name}>
-            <i className={`series-${i}`} />
-            {name}
-          </span>
-        ))}
-      </div>
+      <p className="chart-description muted">{description}</p>
+      {series.length > 1 && (
+        <div className="legend">
+          {series.map((name, i) => (
+            <span key={name}><i className={`series-${i}`} />{name}</span>
+          ))}
+        </div>
+      )}
       {rows.length === 0 ? (
         <p className="muted">No activity for these filters.</p>
       ) : (
