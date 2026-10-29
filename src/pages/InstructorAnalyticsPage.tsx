@@ -2,7 +2,7 @@ import { InfoButton } from '../components/InfoButton';
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { MetricChart } from '../components/MetricChart';
-import { buildCourseAnalytics, type CourseAnalytics } from '../lib/analytics';
+import { useCourseAnalytics, type CourseAnalytics } from '../lib/analytics';
 import { useLms } from '../lib/LmsContext';
 
 const noFilters = { assignmentId: '', dateFrom: '', dateTo: '' };
@@ -16,13 +16,15 @@ export function InstructorAnalyticsPage() {
   const setFilter = (key: keyof typeof noFilters, value: string) =>
     setFilters({ ...filters, [key]: value });
 
-  if (myCourses.length === 0) return <Navigate to="/instructor" replace />;
-
   const course = myCourses.find((c) => c.id === courseId) ?? myCourses[0];
+  const { data: results, error } = useCourseAnalytics(
+    course ? [{ courseId: course.id, filters }] : [], assignments, submissions, enrollments,
+  );
+  if (!course) return <Navigate to="/instructor" replace />;
   const invalidRange = Boolean(
     filters.dateFrom && filters.dateTo && filters.dateFrom > filters.dateTo,
   );
-  const data = buildCourseAnalytics(course.id, filters, assignments, submissions, enrollments);
+  const data = results?.[0];
   const chartDate = (day: string) =>
     new Date(`${day}T00:00:00Z`).toLocaleDateString('en-US', {
       month: 'short',
@@ -111,6 +113,10 @@ export function InstructorAnalyticsPage() {
         <p className="note" role="alert">
           Choose an end date on or after the start date, or reset the filters.
         </p>
+      ) : error ? (
+        <p className="note" role="alert">Course analytics are unavailable. Check that the local application server is running.</p>
+      ) : !data ? (
+        <p className="note" role="status">Loading course analytics…</p>
       ) : (
         <>
           {!data.assignmentMetrics.length && (

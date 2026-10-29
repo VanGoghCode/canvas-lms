@@ -1,23 +1,18 @@
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { InfoButton } from '../components/InfoButton';
+import { useUrlFilters } from '../lib/filters';
 import { ProgressBar } from '../components/WorkspaceVisuals';
 import { formatDate, time } from '../lib/data';
 import { useWorkspace } from '../lib/workspace';
 
 export function GradingQueuePage() {
   const { grading, courses } = useWorkspace();
-  const [params, setParams] = useSearchParams();
+  const { params, setParams, set } = useUrlFilters({ omitAll: true });
   const course = courses.some((c) => c.id === params.get('course')) ? params.get('course')! : '';
   const status = ['pending', 'graded', 'empty'].includes(params.get('status') ?? '')
     ? params.get('status')
     : 'all';
   const query = params.get('q') ?? '';
-  const set = (key: string, value: string) => {
-    const next = new URLSearchParams(params);
-    if (value && value !== 'all') next.set(key, value);
-    else next.delete(key);
-    setParams(next, { replace: true });
-  };
   const visible = grading
     .filter(
       (g) =>

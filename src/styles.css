@@ -1276,6 +1276,7 @@ dialog .actions {
 
 /* Shared contextual information */
 .info-button {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1285,23 +1286,31 @@ dialog .actions {
   min-width: 28px;
   margin-left: 4px;
   padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #426451;
+  cursor: pointer;
+}
+.info-button::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
   border: 1px solid #bccbc0;
   border-radius: 50%;
   background: #fff;
-  color: #426451;
-  font-family: Georgia, serif;
-  font-size: 0.88rem;
-  font-style: italic;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  letter-spacing: 0;
-  text-transform: none;
+}
+.info-button svg {
+  position: relative;
+}
+.info-button:hover::before,
+.info-button[aria-expanded='true']::before {
+  background: #e8f1e9;
+  border-color: #6b9275;
 }
 .info-button:hover,
 .info-button[aria-expanded='true'] {
-  background: #e8f1e9;
-  border-color: #6b9275;
   color: #244c33;
 }
 .info-dialog {
@@ -1414,10 +1423,9 @@ dialog .actions {
   min-height: 28px;
 }
 .kpis > div > span .info-button {
-  width: 22px;
-  min-width: 22px;
-  height: 22px;
-  font-size: 0.73rem;
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
 }
 .progress-overview {
   display: flex;

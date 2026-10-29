@@ -12,7 +12,6 @@ import {
 } from '../src/lib/store';
 import { ACADEMIC_DATE, emptyStudentProfile, time } from '../src/lib/data';
 import { summarizeGrade, identifyStudentsAtRisk } from '../src/lib/grading';
-import { buildCourseAnalytics } from '../src/lib/analytics';
 import { validateStudentProfile } from '../src/lib/profile';
 import type { Assignment, Submission } from '../src/types';
 
@@ -48,7 +47,6 @@ const submission = (assignmentId: string, score: number | null): Submission => (
   comment: '',
   submittedAt: '2026-08-02T12:00:00Z',
 });
-const noFilters = { assignmentId: '', dateFrom: '', dateTo: '' };
 
 describe('complete coursework workflow', () => {
   it('registers, enrolls, drafts, submits, grades, reloads, and locks graded work', () => {
@@ -240,32 +238,5 @@ describe('grades and analytics', () => {
       identifyStudentsAtRisk(['new'], 'c101', [assignment('a', 100)], [submission('a', 69.99)]),
     ).toHaveLength(1);
   });
-  it('uses inclusive UTC due-date filters and retains late submissions', () => {
-    const list = [
-      assignment('a', 100, '2026-08-01T23:59'),
-      assignment('future', 100, '2026-08-22T23:59'),
-    ];
-    const enrollments = [{ id: 'e', studentId: 'new', courseId: 'c101' }];
-    const analytics = buildCourseAnalytics(
-      'c101',
-      { assignmentId: '', dateFrom: '2026-08-01', dateTo: '2026-08-01' },
-      list,
-      [submission('a', 90)],
-      enrollments,
-    );
-    expect(analytics).toMatchObject({
-      totalSubmissions: 1,
-      overallCompletion: 100,
-      overallAverage: 90,
-      lateAverage: 90,
-    });
-    const future = buildCourseAnalytics(
-      'c101',
-      { ...noFilters, assignmentId: 'future' },
-      list,
-      [],
-      enrollments,
-    );
-    expect(future).toMatchObject({ overallAverage: null, overallCompletion: null, cohorts: [] });
-  });
+
 });

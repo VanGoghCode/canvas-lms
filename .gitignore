@@ -3,12 +3,5 @@ dist
 *.local
 *.tsbuildinfo
 .DS_Store
-
-# Python and generated reports
-.venv/
 __pycache__/
-reports/
-
-# Browser test artifacts
-playwright-report/
-test-results/
+.venv/

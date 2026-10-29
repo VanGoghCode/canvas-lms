@@ -4,7 +4,7 @@ import { InfoButton } from '../components/InfoButton';
 import { DeadlineList, ProgressRing } from '../components/WorkspaceVisuals';
 import { byId, time } from '../lib/data';
 import { calculateCurrentCourseGrade } from '../lib/grading';
-import { generateRecommendations, getPacingSuggestion } from '../lib/recommendations';
+import { useStudyPlan } from '../lib/recommendations';
 import { useWorkspace } from '../lib/workspace';
 
 export function DashboardPage() {
@@ -17,14 +17,7 @@ export function DashboardPage() {
   const graded = work.filter((w) => w.stage === 'graded');
   const outstanding = work.filter((w) => !w.submission);
   const next = outstanding[0];
-  const recommendations = generateRecommendations(
-    userId,
-    courses,
-    enrollments,
-    assignments,
-    submissions,
-  );
-  const pacing = getPacingSuggestion(userId, enrollments, assignments, submissions);
+  const { plan, error: studyPlanError } = useStudyPlan(userId, courses, enrollments, assignments, submissions);
   const feedback = [...graded]
     .sort((a, b) => time(b.assignment.dueDate) - time(a.assignment.dueDate))
     .slice(0, 3);
@@ -230,8 +223,10 @@ export function DashboardPage() {
             </InfoButton>
           </h2>
         </div>
+        {studyPlanError && <p role="alert">Study suggestions are unavailable. Check that the local application server is running.</p>}
+        {!plan && !studyPlanError && <p role="status">Loading study suggestions…</p>}
         <div className="grid three">
-          {recommendations.map((r) => (
+          {plan?.recommendations.map((r) => (
             <article className="card study-card" key={r.id}>
               <span className="eyebrow">
                 {r.courseCode} · {r.estimatedMinutes} MIN
@@ -249,13 +244,15 @@ export function DashboardPage() {
             </article>
           ))}
         </div>
-        <div className={`pacing-strip ${pacing.status}`}>
-          <span className="eyebrow">PACING</span>
-          <strong>{pacing.title}</strong>
-          <InfoButton title="Your pacing suggestion">
-            <p>{pacing.message}</p>
-          </InfoButton>
-        </div>
+        {plan && (
+          <div className={`pacing-strip ${plan.pacing.status}`}>
+            <span className="eyebrow">PACING</span>
+            <strong>{plan.pacing.title}</strong>
+            <InfoButton title="Your pacing suggestion">
+              <p>{plan.pacing.message}</p>
+            </InfoButton>
+          </div>
+        )}
       </section>
     </div>
   );

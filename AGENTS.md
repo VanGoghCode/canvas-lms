@@ -5,7 +5,7 @@ Canvas Learning is a maintained learning management application for student cour
 ## Product direction
 
 - Present the application as Canvas Learning. Do not describe the repository or interface as a demo, prototype, sandbox, or testing project.
-- Hardcoded course records and a frontend-only architecture are intentional requirements. Do not introduce a backend, external authentication, or remote services unless requested.
+- Bundled course records and the local Python service for analytics and study suggestions are intentional. Do not introduce external authentication or remote services unless requested.
 - Keep architecture documentation accurate: account selection is local, role checks are client-side, and browser storage is not server synchronization or secure authentication.
 - Use task-oriented product copy. Explain storage or academic-date limitations where relevant, without claiming capabilities that do not exist.
 - Preserve the configured academic reference date and bundled term unless a task explicitly changes scheduling behavior.
@@ -18,8 +18,8 @@ Canvas Learning is a maintained learning management application for student cour
 
 ## Development
 
-- React, TypeScript, and Vite; application code lives in src/.
+- React, TypeScript, and Vite for the interface in src/; Python for the local service in backend/.
 - src/data/ contains bundled records. src/lib/store.ts validates state and actions; src/lib/LmsContext.tsx manages browser persistence.
 - Follow existing accessibility patterns, role-scoped workflows, responsive layouts, and validation.
-- Run npm test and npm run build for changes; run npm run test:e2e when changing workflows or interface labels.
+- Run npm test and npm run build for changes.
 - Preserve unrelated work already present in the working tree. Do not commit unless asked.

@@ -6,7 +6,7 @@ import {
   ProgressRing,
   ProgressBar,
 } from '../components/WorkspaceVisuals';
-import { buildCourseAnalytics } from '../lib/analytics';
+import { useCourseAnalytics } from '../lib/analytics';
 import { byId, courseStudentIds, time } from '../lib/data';
 import { identifyStudentsAtRisk } from '../lib/grading';
 import { useWorkspace } from '../lib/workspace';
@@ -22,16 +22,11 @@ export function InstructorPage() {
   const risk = courses.flatMap((c) =>
     identifyStudentsAtRisk(courseStudentIds(enrollments, c.id), c.id, assignments, submissions),
   );
-  const analytics = courses.map((course) => ({
-    course,
-    data: buildCourseAnalytics(
-      course.id,
-      { assignmentId: '', dateFrom: '', dateTo: '' },
-      assignments,
-      submissions,
-      enrollments,
-    ),
-  }));
+  const { data: courseAnalytics, error: analyticsError } = useCourseAnalytics(
+    courses.map((course) => ({ courseId: course.id, filters: { assignmentId: '', dateFrom: '', dateTo: '' } })),
+    assignments, submissions, enrollments,
+  );
+  const analytics = courseAnalytics?.map((data, index) => ({ course: courses[index], data })) ?? [];
   const distribution = ['A', 'B', 'C', 'D', 'F'].map((letter) =>
     analytics.reduce(
       (sum, a) => sum + (a.data.gradeDistribution.find((g) => g.grade === letter)?.students ?? 0),
@@ -146,11 +141,15 @@ export function InstructorPage() {
               </InfoButton>
             </h2>
           </div>
-          <GradeDistribution counts={distribution} />
+          {analyticsError ? (
+            <p role="alert">Course analytics are unavailable. Check that the local application server is running.</p>
+          ) : !courseAnalytics ? (
+            <p role="status">Loading course analytics…</p>
+          ) : <GradeDistribution counts={distribution} />}
           <div className="section-heading">
-            <small className="muted">
+            {courseAnalytics && <small className="muted">
               {distribution.reduce((a, b) => a + b, 0)} enrollments with a grade
-            </small>
+            </small>}
             <Link to="/instructor/analytics">Full analytics →</Link>
           </div>
         </section>
@@ -169,6 +168,8 @@ export function InstructorPage() {
           </h2>
           <Link to="/courses">Manage coursework →</Link>
         </div>
+        {analyticsError && <p role="alert">Course analytics are unavailable. Check that the local application server is running.</p>}
+        {!courseAnalytics && !analyticsError && <p role="status">Loading course analytics…</p>}
         <div className="grid course-health-grid">
           {analytics.map(({ course, data }) => (
             <article className="card stack" key={course.id}>

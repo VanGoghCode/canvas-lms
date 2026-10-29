@@ -22,7 +22,10 @@ export function InfoButton({ title, children }: { title: string; children: React
           setOpen(true);
         }}
       >
-        i
+        <svg aria-hidden="true" width="10" height="10" viewBox="0 0 10 10">
+          <circle cx="5" cy="2" r="0.8" fill="currentColor" />
+          <path d="M5 4.2v3.9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        </svg>
       </button>
       {createPortal(
         <dialog

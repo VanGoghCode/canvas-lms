@@ -1,5 +1,6 @@
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { InfoButton } from '../components/InfoButton';
+import { useUrlFilters } from '../lib/filters';
 import { ProgressBar } from '../components/WorkspaceVisuals';
 import { byId, ACADEMIC_DATE, time } from '../lib/data';
 import { calculateCurrentCourseGrade } from '../lib/grading';
@@ -7,16 +8,10 @@ import { useWorkspace } from '../lib/workspace';
 
 export function StudentsPage() {
   const { courses, students, enrollments, assignments, submissions } = useWorkspace();
-  const [params, setParams] = useSearchParams();
+  const { params, setParams, set } = useUrlFilters();
   const query = params.get('q') ?? '';
   const support = params.get('status') === 'support';
   const course = courses.some((c) => c.id === params.get('course')) ? params.get('course')! : '';
-  const set = (key: string, value: string) => {
-    const next = new URLSearchParams(params);
-    if (value) next.set(key, value);
-    else next.delete(key);
-    setParams(next, { replace: true });
-  };
   const rows = enrollments
     .filter((e) => courses.some((c) => c.id === e.courseId))
     .map((e) => {

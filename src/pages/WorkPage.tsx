@@ -1,11 +1,12 @@
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { InfoButton } from '../components/InfoButton';
+import { useUrlFilters } from '../lib/filters';
 import { formatDate } from '../lib/data';
 import { stageLabel, stageTone, useWorkspace } from '../lib/workspace';
 
 export function WorkPage() {
   const { work, courses } = useWorkspace();
-  const [params, setParams] = useSearchParams();
+  const { params, setParams, set } = useUrlFilters({ omitAll: true });
   const status = ['missing', 'upcoming', 'pending', 'graded', 'draft'].includes(
     params.get('status') ?? '',
   )
@@ -13,22 +14,14 @@ export function WorkPage() {
     : 'all';
   const course = courses.some((c) => c.id === params.get('course')) ? params.get('course')! : '';
   const query = params.get('q') ?? '';
-  const set = (key: string, value: string) => {
-    const next = new URLSearchParams(params);
-    if (value && value !== 'all') next.set(key, value);
-    else next.delete(key);
-    setParams(next, { replace: true });
-  };
   const matching = work.filter(
     (w) =>
       (!course || w.course.id === course) &&
       `${w.assignment.title} ${w.course.code}`.toLowerCase().includes(query.trim().toLowerCase()),
   );
-  const visible = matching.filter(
-    (w) =>
-      status === 'all' ||
-      (status === 'draft' ? w.hasDraft && w.stage !== 'graded' : w.stage === status),
-  );
+  const matchesStatus = (w: (typeof work)[number], key: string) =>
+    key === 'all' || (key === 'draft' ? w.hasDraft && w.stage !== 'graded' : w.stage === key);
+  const visible = matching.filter((w) => matchesStatus(w, status));
   return (
     <div className="page">
       <header>
@@ -62,13 +55,7 @@ export function WorkPage() {
           >
             {label}
             <span>
-              {
-                matching.filter(
-                  (w) =>
-                    key === 'all' ||
-                    (key === 'draft' ? w.hasDraft && w.stage !== 'graded' : w.stage === key),
-                ).length
-              }
+              {matching.filter((w) => matchesStatus(w, key)).length}
             </span>
           </button>
         ))}

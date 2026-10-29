@@ -1,6 +1,0 @@
-node_modules/
-dist/
-reports/
-test-results/
-playwright-report/
-package-lock.json
